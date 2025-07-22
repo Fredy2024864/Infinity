@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Gestion des codes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #00008d;
+      color: white;
+      padding: 30px;
+    }
+    .container {
+      background: #1A1F50;
+      padding: 20px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(255,255,255,0.2);
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 5px;
+    }
+    button {
+      background: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    .message {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    .code-list {
+      margin-top: 20px;
+      background: #12163A;
+      border-radius: 10px;
+      padding: 10px;
+    }
+    .code-item {
+      padding: 10px;
+      border-bottom: 1px solid #333;
+    }
+    .code-item:last-child {
+      border-bottom: none;
+    }
+    .expired {
+      color: orange;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Créer un code d'échange</h2>
+    <input type="text" id="code" placeholder="Code (ex: VIP123)">
+    <input type="number" id="montant" placeholder="Montant fixe (laisser vide si aléatoire)">
+    <input type="number" id="minMontant" placeholder="Montant min (si aléatoire)">
+    <input type="number" id="maxMontant" placeholder="Montant max (si aléatoire)">
+    <input type="number" id="limite" placeholder="Limite d'utilisation">
+    <input type="number" id="expiration" placeholder="Valide pendant (en minutes)">
+    <button onclick="ajouterCode()">Ajouter le code</button>
+    <p class="message" id="message"></p>
+
+    <div class="code-list" id="codeList">
+      <h3>Codes existants</h3>
+      <button onclick="reinitialiserCodes()" style="background: #f44336; margin-bottom: 10px;">Réinitialiser les codes</button>
+    </div>
+  </div>
+
+  <script>
+    const message = document.getElementById("message");
+    const codeList = document.getElementById("codeList");
+
+    const montantInput = document.getElementById("montant");
+    const minInput = document.getElementById("minMontant");
+    const maxInput = document.getElementById("maxMontant");
+    const limiteInput = document.getElementById("limite");
+    const expirationInput = document.getElementById("expiration");
+
+    function updateFormState() {
+      if (montantInput.value.trim() !== "") {
+        minInput.disabled = true;
+        maxInput.disabled = true;
+        limiteInput.disabled = true;
+        expirationInput.disabled = true;
+      } else {
+        minInput.disabled = false;
+        maxInput.disabled = false;
+        limiteInput.disabled = false;
+        expirationInput.disabled = false;
+      }
+    }
+
+    montantInput.addEventListener("input", updateFormState);
+
+    function ajouterCode() {
+      const code = document.getElementById("code").value.trim().toUpperCase();
+      const montant = parseFloat(montantInput.value);
+      const minMontant = parseFloat(minInput.value);
+      const maxMontant = parseFloat(maxInput.value);
+      const limite = parseInt(limiteInput.value);
+      const expiration = parseInt(expirationInput.value);
+
+      if (!code) {
+        message.textContent = "Le code est requis.";
+        message.style.color = "orange";
+        return;
+      }
+
+      const codes = JSON.parse(localStorage.getItem("exchangeCodes")) || {};
+
+      let codeData = { used: 0 };
+
+      if (!isNaN(montant)) {
+        codeData.montant = montant;
+      } else if (!isNaN(minMontant) && !isNaN(maxMontant) && maxMontant > minMontant && !isNaN(limite) && !isNaN(expiration)) {
+        codeData.montant = { min: minMontant, max: maxMontant };
+        codeData.maxUses = limite;
+        codeData.expiration = Date.now() + expiration * 60 * 1000;
+        codeData.totalDistribue = 0;
+      } else {
+        message.textContent = "Remplis correctement les champs pour le montant fixe ou aléatoire.";
+        message.style.color = "red";
+        return;
+      }
+
+      codes[code] = codeData;
+      localStorage.setItem("exchangeCodes", JSON.stringify(codes));
+
+      message.textContent = `Code "${code}" ajouté avec succès.`;
+      message.style.color = "lightgreen";
+      clearInputs();
+      afficherCodes();
+    }
+
+    function clearInputs() {
+      ["code", "montant", "minMontant", "maxMontant", "limite", "expiration"].forEach(id => {
+        document.getElementById(id).value = "";
+      });
+      updateFormState();
+    }
+
+    function afficherCodes() {
+      const codes = JSON.parse(localStorage.getItem("exchangeCodes")) || {};
+      codeList.innerHTML = `<h3>Codes existants</h3><button onclick="reinitialiserCodes()" style="background: #f44336; margin-bottom: 10px;">Réinitialiser les codes</button>`;
+
+      if (Object.keys(codes).length === 0) {
+        codeList.innerHTML += "<p>Aucun code pour le moment.</p>";
+        return;
+      }
+
+      for (let code in codes) {
+        const c = codes[code];
+        const expire = c.expiration && Date.now() > c.expiration;
+        const timeLeft = c.expiration
+          ? (expire ? "Expiré" : `Expire dans ${Math.ceil((c.expiration - Date.now()) / 60000)} min`)
+          : "Sans limite";
+
+        const montantTxt = typeof c.montant === "object"
+          ? `Aléatoire (${c.montant.min} - ${c.montant.max})`
+          : `${c.montant} FCFA`;
+
+        const usage = c.maxUses ? `Utilisé ${c.used}/${c.maxUses} fois` : "Utilisation unique";
+        const totalTxt = c.totalDistribue !== undefined ? `<br>Total distribué : ${c.totalDistribue.toFixed(2)} FCFA` : "";
+        const moyenneTxt = (c.totalDistribue !== undefined && c.used > 0)
+          ? `<br>Moyenne/utilisateur : ${(c.totalDistribue / c.used).toFixed(2)} FCFA`
+          : "";
+
+        codeList.innerHTML += `
+          <div class="code-item ${expire ? 'expired' : ''}">
+            <strong>${code}</strong> - ${montantTxt}<br>
+            ${usage}${totalTxt}${moyenneTxt}<br>
+            ${timeLeft}
+          </div>
+        `;
+      }
+    }
+
+    function reinitialiserCodes() {
+      if (confirm("Voulez-vous vraiment réinitialiser tous les codes ?")) {
+        localStorage.removeItem("exchangeCodes");
+        afficherCodes();
+        message.textContent = "Tous les codes ont été réinitialisés.";
+        message.style.color = "yellow";
+      }
+    }
+
+    updateFormState();
+    afficherCodes();
+  </script>
+</body>
+</html>

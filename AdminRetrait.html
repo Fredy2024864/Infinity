@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Administrateur</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #0c1022;
+      color: white;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    .withdrawal {
+      background: #1d2b64;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    .no-data {
+      color: yellow;
+      font-size: 18px;
+      margin-top: 20px;
+    }
+    .reset-btn {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+    .reset-btn:hover {
+      background-color: #c0392b;
+    }
+    .validate-btn, .status-btn {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      font-size: 0.9em;
+      cursor: pointer;
+      border-radius: 5px;
+      margin: 5px 3px;
+    }
+    .validate-btn:hover, .status-btn:hover {
+      background-color: #2980b9;
+    }
+    .status-label {
+      margin-top: 10px;
+      font-weight: bold;
+      color: lightgreen;
+    }
+  </style>
+</head>
+<body>
+  <h1>Historique des Retraits</h1>
+  <div id="withdrawalsContainer"></div>
+  <button class="reset-btn" onclick="resetWithdrawals()">Réinitialiser les Retraits</button>
+
+  <script>
+    window.addEventListener('load', () => {
+      displayWithdrawals();
+    });
+  
+    function displayWithdrawals() {
+      const withdrawals = JSON.parse(localStorage.getItem('withdrawals')) || [];
+      const container = document.getElementById('withdrawalsContainer');
+      container.innerHTML = '';
+      if (withdrawals.length === 0) {
+        container.innerHTML = "<p class='no-data'>Aucun retrait effectué.</p>";
+        return;
+      }
+      withdrawals.forEach((withdrawal, index) => {
+        const withdrawalDiv = document.createElement('div');
+        withdrawalDiv.className = 'withdrawal';
+        withdrawalDiv.innerHTML = `
+          <p><strong>Montant retiré :</strong> ${withdrawal.amount} FCFA</p>
+          <p><strong>Nom de la carte :</strong> ${withdrawal.cardInfo?.nom || 'Non spécifié'}</p>
+          <p><strong>Banque :</strong> ${withdrawal.cardInfo?.banque || 'Non spécifiée'}</p>
+          <p><strong>Numéro de carte :</strong> ${withdrawal.cardInfo?.numero || 'Non spécifié'}</p>
+          <p><strong>Date :</strong> ${withdrawal.date || 'Non spécifiée'}</p>
+          ${withdrawal.valide ? "<p style='color:lightgreen;'><strong>Validé</strong></p>" : `<button class='validate-btn' onclick='validateWithdrawal(${index})'>Valider</button>`}
+          <div>
+            <button class="status-btn" onclick="updateStatus(${index}, 'En Traitement')">En Traitement</button>
+            
+            <button class="status-btn" onclick="updateStatus(${index}, 'Transfert Réussi')">Transfert Réussi</button>
+            <button class="status-btn" onclick="updateStatus(${index}, 'Complété')">Complété</button>
+            <button class="status-btn" onclick="updateStatus(${index}, 'Remboursé')">Remboursé</button>
+          </div>
+          <p class="status-label">Statut actuel : ${withdrawal.status || 'Non défini'}</p>
+        `;
+        container.appendChild(withdrawalDiv);
+      });
+    }
+  
+    function validateWithdrawal(index) {
+      const withdrawals = JSON.parse(localStorage.getItem('withdrawals')) || [];
+      if (withdrawals[index]) {
+        withdrawals[index].valide = true;
+        localStorage.setItem('withdrawals', JSON.stringify(withdrawals));
+        displayWithdrawals();
+      }
+    }
+  
+    function updateStatus(index, newStatus) {
+      const withdrawals = JSON.parse(localStorage.getItem('withdrawals')) || [];
+      if (withdrawals[index]) {
+        // Normaliser les statuts pour éviter les erreurs
+        const validStatuses = ['Transfert Réussi', 'En Traitement', 'Complété', 'Remboursé'];
+        if (!validStatuses.includes(newStatus)) {
+          alert("Statut invalide !");
+          return;
+        }
+  
+        withdrawals[index].status = newStatus;
+  
+        // Mettre à jour les étapes (steps) en fonction du statut
+        switch (newStatus) {
+          case 'Transfert Réussi':
+            withdrawals[index].steps = ['done', 'done', 'done'];
+            break;
+          case 'Complété':
+            withdrawals[index].steps = ['done', 'done', 'done', 'done'];
+            break;
+          case 'Transfert en cours':
+            withdrawals[index].steps = ['done', 'in-progress', 'in-progress'];
+            break;
+          case 'En Traitement':
+            withdrawals[index].steps = ['done', 'in-progress', 'pending'];
+            break;
+          case 'Remboursé':
+            withdrawals[index].steps = ['done', 'done', 'done', 'done', 'done'];
+            break;
+          default:
+            withdrawals[index].steps = [];
+        }
+  
+        localStorage.setItem('withdrawals', JSON.stringify(withdrawals));
+        displayWithdrawals();
+      }
+    }
+  
+    function resetWithdrawals() {
+      if (confirm("Êtes-vous sûr de vouloir réinitialiser tous les retraits ?")) {
+        localStorage.removeItem('withdrawals');
+        displayWithdrawals();
+      }
+    }
+
+
+
+
+
+
+
+    window.addEventListener('load', () => {
+    displayWithdrawals();
+});
+function displayWithdrawals() {
+    const withdrawals = JSON.parse(localStorage.getItem('withdrawals')) || [];
+    const container = document.getElementById('withdrawalsContainer');
+    container.innerHTML = '';
+    if (withdrawals.length === 0) {
+        container.innerHTML = "<p class='no-data'>Aucun retrait effectué.</p>";
+        return;
+    }
+    withdrawals.forEach((withdrawal, index) => {
+        const withdrawalDiv = document.createElement('div');
+        withdrawalDiv.className = 'withdrawal';
+        withdrawalDiv.innerHTML = `
+            <p><strong>Montant retiré :</strong> ${withdrawal.amount} FCFA</p>
+            <p><strong>Nom de la carte :</strong> ${withdrawal.cardInfo?.nom || 'Non spécifié'}</p>
+            <p><strong>Banque :</strong> ${withdrawal.cardInfo?.banque || 'Non spécifiée'}</p>
+            <p><strong>Numéro de carte :</strong> ${withdrawal.cardInfo?.numero || 'Non spécifié'}</p>
+            <p><strong>Date :</strong> ${withdrawal.date || 'Non spécifiée'}</p>
+            ${withdrawal.valide ? "<p style='color:lightgreen;'><strong>Validé</strong></p>" : `<button class='validate-btn' onclick='validateWithdrawal(${index})'>Valider</button>`}
+            <div>
+                <button class="status-btn" onclick="updateStatus(${index}, 'En Traitement')">En Traitement</button>
+                <button class="status-btn" onclick="updateStatus(${index}, 'Transfert Réussi')">Transfert Réussi</button>
+                <button class="status-btn" onclick="updateStatus(${index}, 'Complété')">Complété</button>
+                <button class="status-btn" onclick="updateStatus(${index}, 'Remboursé')">Remboursé</button>
+            </div>
+            <p class="status-label">Statut actuel : ${withdrawal.status || 'Non défini'}</p>
+        `;
+        container.appendChild(withdrawalDiv);
+    });
+}
+function validateWithdrawal(index) {
+    const withdrawals = JSON.parse(localStorage.getItem('withdrawals')) || [];
+    if (withdrawals[index]) {
+        withdrawals[index].valide = true;
+        localStorage.setItem('withdrawals', JSON.stringify(withdrawals));
+        displayWithdrawals();
+    }
+}
+function updateStatus(index, newStatus) {
+    const withdrawals = JSON.parse(localStorage.getItem('withdrawals')) || [];
+    if (withdrawals[index]) {
+        const validStatuses = ['Transfert Réussi', 'En Traitement', 'Complété', 'Remboursé'];
+        if (!validStatuses.includes(newStatus)) {
+            alert("Statut invalide !");
+            return;
+        }
+        withdrawals[index].status = newStatus;
+        // Ajouter au portefeuille si le statut est "Remboursé"
+        if (newStatus === 'Remboursé') {
+            const revenueWallet = parseFloat(localStorage.getItem('portefeuilleRevenus')) || 0;
+            const amountToRefund = parseFloat(withdrawals[index].amount) || 0;
+            localStorage.setItem('portefeuilleRevenus', revenueWallet + amountToRefund);
+        }
+        localStorage.setItem('withdrawals', JSON.stringify(withdrawals));
+        displayWithdrawals();
+    }
+}
+function resetWithdrawals() {
+    if (confirm("Êtes-vous sûr de vouloir réinitialiser tous les retraits ?")) {
+        localStorage.removeItem('withdrawals');
+        displayWithdrawals();
+    }
+}
+  </script>
+</body>
+</html>

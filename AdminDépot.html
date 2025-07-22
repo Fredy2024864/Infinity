@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Admin Dépôts MTN et Wave</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0a0f1a;
+            margin: 0;
+            padding: 0;
+            color: white;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 800px;
+            margin: 30px auto;
+            background: #111b32;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .depot {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 15px 10px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .depot p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .btn-group {
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 8px 12px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .valider {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .annuler {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .statut-en-attente {
+            color: #ffc107;
+        }
+
+        .statut-validé {
+            color: #28a745;
+        }
+
+        .statut-annulé {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Liste des Dépôts MTN et Wave</h1>
+    <div id="liste-depots"></div>
+  </div>
+
+  <script>
+    function chargerDepots() {
+      const listeContainer = document.getElementById("liste-depots");
+      const depots = JSON.parse(localStorage.getItem("depots") || "[]");
+
+      if (depots.length === 0) {
+        listeContainer.innerHTML = "<p style='text-align:center;'>Aucun dépôt pour le moment.</p>";
+        return;
+      }
+
+      listeContainer.innerHTML = "";
+      depots.forEach((depot, index) => {
+        const depotDiv = document.createElement("div");
+        depotDiv.className = "depot";
+        depotDiv.innerHTML = `
+          <p><strong>Nom :</strong> ${depot.nom}</p>
+          <p><strong>Montant :</strong> ${depot.montant}</p>
+          <p><strong>Méthode de Paiement :</strong> ${depot.methodePaiement}</p>
+          <p><strong>ID Transaction :</strong> ${depot.transactionId}</p>
+          <p><strong>Statut :</strong> <span class="status statut-${depot.statut.replace(/\s/g, '-').toLowerCase()}">${depot.statut}</span></p>
+          <div class="btn-group">
+            <button class="btn valider" onclick="changerStatut(${index}, 'Validé')">Valider</button>
+            <button class="btn annuler" onclick="changerStatut(${index}, 'Annulé')">Annuler</button>
+          </div>
+        `;
+        listeContainer.appendChild(depotDiv);
+      });
+    }
+
+    function changerStatut(index, nouveauStatut) {
+      const depots = JSON.parse(localStorage.getItem("depots") || "[]");
+      depots[index].statut = nouveauStatut;
+      localStorage.setItem("depots", JSON.stringify(depots));
+      chargerDepots();
+    }
+
+    document.addEventListener("DOMContentLoaded", chargerDepots);
+  </script>
+
+
+<script>
+  function changerStatut(index, nouveauStatut) {
+    const depots = JSON.parse(localStorage.getItem("depots") || "[]");
+
+    // Vérifiez si le statut passe à "Validé" et que ce n'était pas déjà le cas
+    if (nouveauStatut === "Validé" && depots[index].statut !== "Validé") {
+      const montant = parseFloat(depots[index].montant);
+
+      // Récupérez le montant actuel du Portefeuille Recharge
+      const portefeuilleRecharge = parseFloat(localStorage.getItem("portefeuilleRecharge") || "0");
+
+      // Ajoutez le montant validé au Portefeuille Recharge
+      const nouveauMontant = portefeuilleRecharge + montant;
+      localStorage.setItem("portefeuilleRecharge", nouveauMontant.toFixed(2));
+    }
+
+    // Mettez à jour le statut du dépôt
+    depots[index].statut = nouveauStatut;
+    localStorage.setItem("depots", JSON.stringify(depots));
+
+    // Rechargez la liste des dépôts
+    chargerDepots();
+  }
+</script>
+</body>
+</html>

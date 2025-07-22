@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Page Admin - InfinityVest</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #0b1e3f;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #08162e;
+      padding: 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      width: 100%;
+      max-width: 800px;
+      margin-bottom: 40px;
+    }
+
+    .admin-btn {
+      background-color: #1e3a8a;
+      color: white;
+      border: none;
+      padding: 15px 20px;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      width: 100%;
+    }
+
+    .admin-btn:hover {
+      background-color: #3b82f6;
+    }
+
+    .output {
+      background-color: #112244;
+      padding: 20px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 800px;
+      text-align: center;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-content {
+      background-color: #1c2a48;
+      margin: 15% auto;
+      padding: 30px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      color: white;
+    }
+
+    .modal-content input {
+      padding: 10px;
+      width: 80%;
+      margin: 15px 0;
+      border-radius: 8px;
+      border: none;
+    }
+
+    .modal-content button {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .modal-content button:hover {
+      background-color: #3b82f6;
+    }
+
+    .error {
+      color: #ff4d4d;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Admin - InfinityVest</h1>
+  </header>
+
+  <div class="container">
+    <div class="button-grid">
+      <button class="admin-btn" onclick="openModal('recharges')">Admin Recharges</button>
+      <button class="admin-btn" onclick="openModal('retrait')">Admin Retrait</button>
+      <button class="admin-btn" onclick="openModal('message')">Admin Message</button>
+      <button class="admin-btn" onclick="openModal('salaire')">Admin Salaire</button>
+      <button class="admin-btn" onclick="openModal('exchange')">Admin Exchange</button>
+    </div>
+
+    <div class="output" id="output">Cliquez sur un bouton pour afficher une section.</div>
+  </div>
+
+  <!-- Modal -->
+  <div id="passwordModal" class="modal">
+    <div class="modal-content">
+      <h3>Mot de passe requis</h3>
+      <input type="password" id="passwordInput" placeholder="Entrez le mot de passe" />
+      <div>
+        <button onclick="verifyPassword()">Valider</button>
+        <button onclick="closeModal()">Annuler</button>
+      </div>
+      <div id="errorMsg" class="error"></div>
+    </div>
+  </div>
+
+  <div id="rechargesModal" class="modal">
+    <div class="modal-content">
+      <h3>Liste des Dépôts MTN et Wave</h3>
+      <div id="liste-depots"></div>
+      <div>
+        <button onclick="resetDepots()">Réinitialiser</button>
+        <button onclick="closeRechargesModal()">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="retraitModal" class="modal">
+    <div class="modal-content">
+      <h3>Historique des Retraits</h3>
+      <div id="withdrawalsContainer"></div>
+      <div>
+        <button onclick="resetWithdrawals()">Réinitialiser les Retraits</button>
+        <button onclick="closeRetraitModal()">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="exchangeModal" class="modal">
+    <div class="modal-content">
+      <h2>Créer un code d'échange</h2>
+      <input type="text" id="code" placeholder="Code (ex: VIP123)">
+      <input type="number" id="montant" placeholder="Montant fixe (laisser vide si aléatoire)">
+      <input type="number" id="minMontant" placeholder="Montant min (si aléatoire)">
+      <input type="number" id="maxMontant" placeholder="Montant max (si aléatoire)">
+      <input type="number" id="limite" placeholder="Limite d'utilisation">
+      <input type="number" id="expiration" placeholder="Valide pendant (en minutes)">
+      <button onclick="ajouterCode()">Ajouter le code</button>
+      <p class="message" id="message"></p>
+
+      <div class="code-list" id="codeList">
+        <h3>Codes existants</h3>
+        <button onclick="reinitialiserCodes()" style="background: #f44336; margin-bottom: 10px;">Réinitialiser les codes</button>
+      </div>
+      <button onclick="closeExchangeModal()" style="background: #f44336; margin-top: 10px;">Fermer</button>
+    </div>
+  </div>
+
+  <script>
+    const sectionPasswords = {
+      recharges: "recharge2025",
+      retrait: "retrait2025",
+      message: "message2025",
+      salaire: "salaire2025",
+      exchange: "exchange2025",
+    };
+
+    const sectionTexts = {
+      recharges: "Vous êtes dans la section Admin Recharges.",
+      retrait: "Vous êtes dans la section Admin Retrait.",
+      message: "Vous êtes dans la section Admin Message.",
+      salaire: "Vous êtes dans la section Admin Salaire.",
+      exchange: "Vous êtes dans la section Admin Exchange.",
+    };
+
+    let currentSection = "";
+
+    function openModal(section) {
+      currentSection = section;
+      document.getElementById("passwordInput").value = "";
+      document.getElementById("errorMsg").textContent = "";
+      document.getElementById("passwordModal").style.display = "block";
+      document.getElementById("passwordInput").focus();
+    }
+
+    function closeModal() {
+      document.getElementById("passwordModal").style.display = "none";
+    }
+
+    function verifyPassword() {
+      const input = document.getElementById("passwordInput").value;
+      if (input === sectionPasswords[currentSection]) {
+        if (currentSection === "recharges") {
+          chargerDepots();
+          document.getElementById("rechargesModal").style.display = "block";
+        } else if (currentSection === "retrait") {
+          displayWithdrawals();
+          document.getElementById("retraitModal").style.display = "block";
+        } else if (currentSection === "exchange") {
+          afficherExchangeModal();
+          return;
+        } else {
+          document.getElementById("output").textContent = sectionTexts[currentSection];
+        }
+        closeModal();
+      } else {
+        document.getElementById("errorMsg").textContent = "Mot de passe incorrect.";
+      }
+    }
+
+    function closeRechargesModal() {
+      document.getElementById("rechargesModal").style.display = "none";
+    }
+
+    function chargerDepots() {
+      const listeContainer = document.getElementById("liste-depots");
+      const depots = JSON.parse(localStorage.getItem("depots") || "[]");
+      if (depots.length === 0) {
+        listeContainer.innerHTML = "<p style='text-align:center;'>Aucun dépôt pour le moment.</p>";
+        return;
+      }
+      listeContainer.innerHTML = "";
+      depots.forEach((depot, index) => {
+        const depotDiv = document.createElement("div");
+        depotDiv.className = "depot";
+        depotDiv.innerHTML = `
+          <p><strong>Nom :</strong> ${depot.nom}</p>
+          <p><strong>Montant :</strong> ${depot.montant}</p>
+          <p><strong>Méthode de Paiement :</strong> ${depot.methodePaiement}</p>
+          <p><strong>ID Transaction :</strong> ${depot.transactionId}</p>
+          <p><strong>Statut :</strong> <span class="status">${depot.statut}</span></p>
+          <div class="btn-group">
+            <button class="btn valider" onclick="changerStatut(${index}, 'Validé')">Valider</button>
+            <button class="btn annuler" onclick="changerStatut(${index}, 'Annulé')">Annuler</button>
+          </div>
+        `;
+        listeContainer.appendChild(depotDiv);
+      });
+    }
+
+    function changerStatut(index, nouveauStatut) {
+      const depots = JSON.parse(localStorage.getItem("depots") || "[]");
+      if (nouveauStatut === "Validé" && depots[index].statut !== "Validé") {
+        const montant = parseFloat(depots[index].montant);
+        const portefeuilleRecharge = parseFloat(localStorage.getItem("portefeuilleRecharge") || "0");
+        const nouveauMontant = portefeuilleRecharge + montant;
+        localStorage.setItem("portefeuilleRecharge", nouveauMontant.toFixed(2));
+      }
+      depots[index].statut = nouveauStatut;
+      localStorage.setItem("depots", JSON.stringify(depots));
+      chargerDepots();
+    }
+
+    function resetDepots() {
+      localStorage.removeItem("depots");
+      chargerDepots();
+    }
+
+    function closeRetraitModal() {
+      document.getElementById("retraitModal").style.display = "none";
+    }
+
+    function displayWithdrawals() {
+      const withdrawals = JSON.parse(localStorage.getItem("withdrawals")) || [];
+      const container = document.getElementById("withdrawalsContainer");
+      container.innerHTML = "";
+      if (withdrawals.length === 0) {
+        container.innerHTML = "<p class='no-data'>Aucun retrait effectué.</p>";
+        return;
+      }
+      withdrawals.forEach((withdrawal, index) => {
+        const withdrawalDiv = document.createElement("div");
+        withdrawalDiv.className = "withdrawal";
+        withdrawalDiv.innerHTML = `
+          <p><strong>Montant retiré :</strong> ${withdrawal.amount} FCFA</p>
+          <p><strong>Nom de la carte :</strong> ${withdrawal.cardInfo?.nom || "Non spécifié"}</p>
+          <p><strong>Banque :</strong> ${withdrawal.cardInfo?.banque || "Non spécifiée"}</p>
+          <p><strong>Numéro de carte :</strong> ${withdrawal.cardInfo?.numero || "Non spécifié"}</p>
+          <p><strong>Date :</strong> ${withdrawal.date || "Non spécifiée"}</p>
+          ${
+            withdrawal.valide
+              ? "<p style='color:lightgreen;'><strong>Validé</strong></p>"
+              : `<button class='validate-btn' onclick='validateWithdrawal(${index})'>Valider</button>`
+          }
+          <div>
+            <button class="status-btn" onclick="updateStatus(${index}, 'En Traitement')">En Traitement</button>
+            <button class="status-btn" onclick="updateStatus(${index}, 'Transfert Réussi')">Transfert Réussi</button>
+            <button class="status-btn" onclick="updateStatus(${index}, 'Complété')">Complété</button>
+            <button class="status-btn" onclick="updateStatus(${index}, 'Remboursé')">Remboursé</button>
+          </div>
+          <p class="status-label">Statut actuel : ${withdrawal.status || "Non défini"}</p>
+        `;
+        container.appendChild(withdrawalDiv);
+      });
+    }
+
+    function validateWithdrawal(index) {
+      const withdrawals = JSON.parse(localStorage.getItem("withdrawals")) || [];
+      if (withdrawals[index]) {
+        withdrawals[index].valide = true;
+        localStorage.setItem("withdrawals", JSON.stringify(withdrawals));
+        displayWithdrawals();
+      }
+    }
+
+    function updateStatus(index, newStatus) {
+      const withdrawals = JSON.parse(localStorage.getItem("withdrawals")) || [];
+      if (withdrawals[index]) {
+        const validStatuses = ["Transfert Réussi", "En Traitement", "Complété", "Remboursé"];
+        if (!validStatuses.includes(newStatus)) {
+          alert("Statut invalide !");
+          return;
+        }
+        withdrawals[index].status = newStatus;
+        if (newStatus === "Remboursé") {
+          const revenueWallet = parseFloat(localStorage.getItem("portefeuilleRevenus")) || 0;
+          const amountToRefund = parseFloat(withdrawals[index].amount) || 0;
+          localStorage.setItem("portefeuilleRevenus", revenueWallet + amountToRefund);
+        }
+        localStorage.setItem("withdrawals", JSON.stringify(withdrawals));
+        displayWithdrawals();
+      }
+    }
+
+    function resetWithdrawals() {
+      if (confirm("Êtes-vous sûr de vouloir réinitialiser tous les retraits ?")) {
+        localStorage.removeItem("withdrawals");
+        displayWithdrawals();
+      }
+    }
+
+    function afficherExchangeModal() {
+      afficherCodes();
+      document.getElementById("exchangeModal").style.display = "block";
+
+      // Ajout du contenu du modal pour la gestion des codes
+      const exchangeContainer = document.getElementById("exchangeModal");
+      exchangeContainer.innerHTML = `
+        <div class="modal-content">
+          <h2>Créer un code d'échange</h2>
+          <input type="text" id="code" placeholder="Code (ex: VIP123)">
+          <input type="number" id="montant" placeholder="Montant fixe (laisser vide si aléatoire)">
+          <input type="number" id="minMontant" placeholder="Montant min (si aléatoire)">
+          <input type="number" id="maxMontant" placeholder="Montant max (si aléatoire)">
+          <input type="number" id="limite" placeholder="Limite d'utilisation">
+          <input type="number" id="expiration" placeholder="Valide pendant (en minutes)">
+          <button onclick="ajouterCode()">Ajouter le code</button>
+          <p class="message" id="message"></p>
+
+          <div class="code-list" id="codeList">
+            <h3>Codes existants</h3>
+            <button onclick="reinitialiserCodes()" style="background: #f44336; margin-bottom: 10px;">Réinitialiser les codes</button>
+          </div>
+          <button onclick="closeExchangeModal()" style="background: #f44336; margin-top: 10px;">Fermer</button>
+        </div>
+      `;
+    }
+
+    function ajouterCode() {
+      const code = document.getElementById("code").value.trim().toUpperCase();
+      const montant = parseFloat(document.getElementById("montant").value);
+      const minMontant = parseFloat(document.getElementById("minMontant").value);
+      const maxMontant = parseFloat(document.getElementById("maxMontant").value);
+      const limite = parseInt(document.getElementById("limite").value);
+      const expiration = parseInt(document.getElementById("expiration").value);
+
+      const message = document.getElementById("message");
+      if (!code) {
+        message.textContent = "Le code est requis.";
+        message.style.color = "orange";
+        return;
+      }
+
+      const codes = JSON.parse(localStorage.getItem("exchangeCodes")) || {};
+      let codeData = { used: 0 };
+
+      if (!isNaN(montant)) {
+        codeData.montant = montant;
+      } else if (!isNaN(minMontant) && !isNaN(maxMontant) && maxMontant > minMontant && !isNaN(limite) && !isNaN(expiration)) {
+        codeData.montant = { min: minMontant, max: maxMontant };
+        codeData.maxUses = limite;
+        codeData.expiration = Date.now() + expiration * 60 * 1000;
+        codeData.totalDistribue = 0;
+      } else {
+        message.textContent = "Remplis correctement les champs pour le montant fixe ou aléatoire.";
+        message.style.color = "red";
+        return;
+      }
+
+      codes[code] = codeData;
+      localStorage.setItem("exchangeCodes", JSON.stringify(codes));
+      message.textContent = `Code "${code}" ajouté avec succès.`;
+      message.style.color = "lightgreen";
+      clearInputs();
+      afficherCodes();
+    }
+
+    function clearInputs() {
+      ["code", "montant", "minMontant", "maxMontant", "limite", "expiration"].forEach(id => {
+        document.getElementById(id).value = "";
+      });
+    }
+
+    function afficherCodes() {
+      const codes = JSON.parse(localStorage.getItem("exchangeCodes")) || {};
+      const codeList = document.getElementById("codeList");
+      codeList.innerHTML = `<h3>Codes existants</h3><button onclick="reinitialiserCodes()" style="background: #f44336; margin-bottom: 10px;">Réinitialiser les codes</button>`;
+
+      if (Object.keys(codes).length === 0) {
+        codeList.innerHTML += "<p>Aucun code pour le moment.</p>";
+        return;
+      }
+
+      for (let code in codes) {
+        const c = codes[code];
+        const expiré = c.expiration && Date.now() > c.expiration;
+        const timeLeft = c.expiration
+          ? (expiré ? "Expiré" : `Expire dans ${Math.ceil((c.expiration - Date.now()) / 60000)} min`)
+          : "Sans limite";
+
+        const montantTxt = typeof c.montant === "object"
+          ? `Aléatoire (${c.montant.min} - ${c.montant.max})`
+          : `${c.montant} FCFA`;
+
+        const usage = c.maxUses ? `Utilisé ${c.used}/${c.maxUses} fois` : "Utilisation unique";
+        const totalTxt = c.totalDistribue !== undefined ? `<br>Total distribué : ${c.totalDistribue.toFixed(2)} FCFA` : "";
+        const moyenneTxt = (c.totalDistribue !== undefined && c.used > 0)
+          ? `<br>Moyenne/utilisateur : ${(c.totalDistribue / c.used).toFixed(2)} FCFA`
+          : "";
+
+        codeList.innerHTML += `
+          <div class="code-item ${expiré ? 'expired' : ''}">
+            <strong>${code}</strong> - ${montantTxt}<br>
+            ${usage}${totalTxt}${moyenneTxt}<br>
+            ${timeLeft}
+          </div>
+        `;
+      }
+    }
+
+    function reinitialiserCodes() {
+      if (confirm("Voulez-vous vraiment réinitialiser tous les codes ?")) {
+        localStorage.removeItem("exchangeCodes");
+        afficherCodes();
+        const message = document.getElementById("message");
+        message.textContent = "Tous les codes ont été réinitialisés.";
+        message.style.color = "yellow";
+      }
+    }
+
+    function closeExchangeModal() {
+      document.getElementById("exchangeModal").style.display = "none";
+    }
+
+    window.onclick = function (event) {
+      const modal = document.getElementById("passwordModal");
+      if (event.target === modal) {
+        closeModal();
+      }
+    }
+  </script>
+</body>
+</html>
