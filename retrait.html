@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <title>Retrait</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0c1022;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #101c45;
+            border-radius: 10px;
+        }
+        h1 {
+            font-size: 24px;
+        }
+        .wallet {
+            background: #1d2b64;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        .wallet .title {
+            font-size: 18px;
+        }
+        .wallet .amount {
+            font-size: 22px;
+            font-weight: bold;
+        }
+        .input-box {
+            margin: 15px 0;
+            text-align: left;
+        }
+        .input-box label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        .input-box input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .link-card a {
+            color: #0af;
+            text-decoration: none;
+        }
+        .rules {
+            text-align: left;
+            font-size: 14px;
+            margin: 15px 0;
+        }
+        .highlight {
+            color: orange;
+            font-weight: bold;
+        }
+        .withdraw-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .withdraw-btn:hover {
+            background-color: #2980b9;
+        }
+        #wallet-balance {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: white;
+            margin-top: 10px;
+        }
+        .confirmation-message {
+            color: green;
+            display: none;
+        }
+        .error-message {
+            color: red;
+            display: none;
+        }
+        a i{
+            color: #fff;
+            position: fixed;
+            font-size: 20px;
+            font-weight: bold;
+            top: 12px;
+            left: 18px;
+
+        }
+        a:hover i{
+            color: #3498db;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>RETRAIT</h1>
+        <div class="wallet">
+            <h2 class="title">Portefeuille Retrait : <span id="walletRetrait">0 FCFA</span></h2>
+        </div>
+        <form id="withdrawForm">
+            <div class="input-box">
+                <label for="amount">Montant à retirer (FCFA)</label>
+                <input type="number" id="amount" placeholder="Saisir le montant" min="800">
+                <p id="confirmation-message" class="confirmation-message">Votre retrait est en cours de traitement.</p>
+                <p id="error-message" class="error-message"></p>
+            </div>
+            <a onclick="redirectToUser()"><i class="fa-solid fa-arrow-left"></i></a>
+            <div class="link-card">
+                <a onclick="redirectToBanque()">Aller lier la carte</a>
+            </div>
+            <div class="rules">
+                <h2>Règles Retrait</h2>
+                <p>1. Veuillez vous assurer que les informations de la carte bancaire sont correctes. Si les informations sont incorrectes et que le retrait n'arrive pas, la perte sera à votre charge.</p>
+                <p>2. Votre retrait arrivera sur votre carte bancaire dans un délai de 1 à 3 jours ouvrables.</p>
+                <p>3. Heures de retrait : de 09h00 à 17h30, les banques sont fermées le dimanche et aucun retrait n'est traité.</p>
+                <p>4. Les retraits entraîneront <span class="highlight">10%</span> des frais de traitement, Le montant minimum de retrait est <span class="highlight">800 FCFA</span>.</p>
+            </div>
+            <button type="submit" class="withdraw-btn" id="submit-button">Retirer</button>
+        </form>
+    </div>
+    <script>
+        function redirectToUser() {
+            window.location.href = 'user.html'; // Redirection vers la page utilisateur
+        }
+        function redirectToBanque() {
+            window.location.href = 'lier banque.html'; // Redirection vers la page de liaison de carte
+        }
+        function updateWalletDisplay() {
+            const portefeuille = parseInt(localStorage.getItem('portefeuilleRevenus') || '0', 10);
+            document.getElementById('walletRetrait').textContent = portefeuille.toLocaleString() + ' FCFA';
+        }
+        function handleWithdrawal(event) {
+            event.preventDefault(); // Empêche le rechargement de la page
+            const amountInput = document.getElementById('amount');
+            const confirmationMessage = document.getElementById('confirmation-message');
+            const errorMessage = document.getElementById('error-message');
+            const portefeuille = parseInt(localStorage.getItem('portefeuilleRevenus') || '0', 10);
+            const amountToWithdraw = parseInt(amountInput.value, 10);
+            const savedCard = JSON.parse(localStorage.getItem('savedCard'));
+            // Vérification si une carte est liée
+            if (!savedCard) {
+                errorMessage.textContent = "Veuillez lier une carte avant de retirer.";
+                errorMessage.style.display = 'block';
+                confirmationMessage.style.display = 'none';
+                return;
+            }
+            // Validation du montant à retirer
+            if (isNaN(amountToWithdraw) || amountToWithdraw < 800) {
+                errorMessage.textContent = "Le montant minimum de retrait est de 800 FCFA.";
+                errorMessage.style.display = 'block';
+                confirmationMessage.style.display = 'none';
+                return;
+            }
+            if (amountToWithdraw > portefeuille) {
+                errorMessage.textContent = "Le montant saisi dépasse votre solde disponible.";
+                errorMessage.style.display = 'block';
+                confirmationMessage.style.display = 'none';
+                return;
+            }
+            // Mise à jour du solde après retrait
+            const newBalance = portefeuille - amountToWithdraw;
+            localStorage.setItem('portefeuilleRevenus', newBalance);
+            updateWalletDisplay();
+            // Enregistrement du retrait
+            const withdrawals = JSON.parse(localStorage.getItem('withdrawals')) || [];
+            const newWithdrawal = {
+                amount: amountToWithdraw,
+                cardInfo: savedCard,
+                date: new Date().toLocaleString('fr-FR')
+            };
+            withdrawals.push(newWithdrawal);
+            localStorage.setItem('withdrawals', JSON.stringify(withdrawals));
+            // Affichage du message de confirmation
+            confirmationMessage.style.display = 'block';
+            confirmationMessage.textContent = "Votre retrait est en cours de traitement.";
+            errorMessage.style.display = 'none';
+            // Redirection vers la page administrateur après un délai
+            setTimeout(() => {
+                window.location.href = 'historique_retraits.html';
+            }, 2000);
+        }
+        // Événement de soumission du formulaire
+        document.getElementById('withdrawForm').addEventListener('submit', handleWithdrawal);
+        // Chargement initial des données
+        window.addEventListener('load', updateWalletDisplay);
+    </script>
+</body>
+</html>

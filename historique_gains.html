@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Historique des Gains</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+<body>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #0A0F1D;
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+    }
+    .container {
+      width: 90%;
+      max-width: 600px;
+      margin: 20px auto;
+      text-align: center;
+    }
+    .header h1 {
+      font-size: 28px;
+      font-weight: bold;
+      color: #00FF88;
+      margin-bottom: 20px;
+    }
+    .historique-container {
+      background-color: #1E3A8A;
+      padding: 15px;
+      border-radius: 10px;
+      width: 100%;
+    }
+    .historique-list {
+      list-style: none;
+      padding: 0;
+      color: #ffffff;
+      font-size: 14px;
+    }
+    .historique-list li {
+      margin-bottom: 5px;
+      padding: 10px;
+      background-color: #334e8f;
+      border-radius: 5px;
+    }
+    .back-btn {
+      display: inline-block;
+      background-color: #FFA500;
+      color: #fff;
+      font-weight: bold;
+      padding: 12px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      margin-top: 20px;
+      border: none;
+      transition: background-color 0.3s;
+    }
+    .back-btn:hover {
+      background-color: #ffb733;
+    }
+    .profile-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .modal {
+      display: none; /* Masquer par défaut */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal.active {
+      display: flex; /* Afficher la modale */
+    }
+    .container-menu {
+      background: #112866; 
+      padding: 5px 20px;
+      border-radius: 10px;
+    }
+    .close-btn {
+      position: absolute;
+      top: 230px;
+      right: 470px;
+      border: none;
+      border-radius: 5px;
+      width: 30px;
+      height: 30px;
+      font-weight: bold;
+      font-size: 20px;
+      cursor: pointer;
+      color: #fff;
+      background: none;
+    }
+    span img {
+      width: 50px;
+      height: 50px;
+      border-radius: 100%;
+    }
+    .contact a {
+      color: #fff;
+    }
+    h2 {
+      border-bottom: 1px solid #27ff9d;
+    }
+  </style>
+  <div class="container">
+    <div class="header">
+      <h1>Historique des Gains</h1>
+    </div>
+    <div class="historique-container">
+      <ul class="historique-list">
+        <!-- Les gains seront ajoutés dynamiquement -->
+      </ul>
+    </div>
+    <button class="back-btn" onclick="goBack()">Retour</button>
+  </div>
+  <div class="profile-icon" onclick="window.location.href='contactservice.html'"></div>
+  <i class="profile-icon" onclick="openModal()"><span><img src="img/service client.jpg" alt=""></span></i>
+  <div id="serviceModal" class="modal">
+    <div class="container-menu">
+      <button class="close-btn" onclick="closeModal()">×</button>
+      <h2>Contactez notre Service Client</h2>
+      <p class="contact">📞 Ligne 1 : <a href="https://wa.me/2250502056302" target="_blank">+225 0502056302</a></p>
+      <p class="contact">📞 Ligne 2 : <a href="https://wa.me/2250719455161" target="_blank">+225 0719455161</a></p>
+      <p class="contact">📞 Ligne 3 : <a href="https://wa.me/2250799343386" target="_blank">+225 0799343386</a></p>
+    </div>
+  </div>
+  <script>
+    function goBack() {
+      window.history.back();
+    }
+    function openModal() {
+      document.getElementById('serviceModal').classList.add('active');
+    }
+    function closeModal() {
+      document.getElementById('serviceModal').classList.remove('active');
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const historiqueList = document.querySelector('.historique-list');
+      const historique = JSON.parse(localStorage.getItem('historiqueGains')) || [];
+      historique.forEach(item => {
+        const historiqueItem = document.createElement('li');
+        historiqueItem.textContent = `Date: ${item.date} - Montant: ${item.montant} FCFA`;
+        historiqueList.appendChild(historiqueItem);
+      });
+    });
+  </script>
+</body>
+</html>

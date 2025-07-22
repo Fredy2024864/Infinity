@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Carte Bancaire</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        body {
+            background-color: #0a0f2d;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            justify-content: space-between;
+        }
+        .card-container {
+            width: 360px;
+            border-radius: 12px;
+            text-align: center;
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        h2{
+            position: relative;
+            font-size: 24px;
+            font-weight: bold;
+            top: -18px;
+            left: -220px;
+       ;
+        }
+        .card {
+            width: 85%;
+            height: 200px;
+            background: linear-gradient(135deg, #2db6ed, #1a81c2);
+            border-radius: 18px;
+            padding: 20px;
+            position: relative;
+        }
+        .card .title {
+            font-size: 20px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+        }
+        .card .subtitle {
+            font-size: 14px;
+            font-weight: normal;
+            position: absolute;
+            top: 40px;
+            left: 20px;
+        }
+        .card .number {
+            font-size: 14px;
+            font-weight: bold;
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+        }
+        .chip-image {
+            position: absolute;
+            top: 95px; /* Ajustez la position selon vos besoins */
+            left: 10px; /* Ajustez la position selon vos besoins */
+            width: 50px; /* Ajustez la taille selon vos besoins */
+            height: auto;
+            border-radius: 3px;
+        }
+        .payment-logos {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+        }
+        .payment-logos img {
+            width: 40px; /* Ajustez la taille selon vos besoins */
+            height: auto;
+            display: none; /* Masquer par défaut */
+            position: absolute;
+            top: -220px;
+            right: 1px;
+        }
+        .icons {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 15px;
+            font-size: 18px;
+            display: none;
+        }
+        .icons i {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .icons i:hover {
+            transform: scale(1.2);
+        }
+        .message {
+            color: red;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        .link-button {
+            padding: 12px 40px;
+            background-color: #2db6ed;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 14px;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        .link-button:hover {
+            background-color: #1a81c2;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .modal-content {
+            background-color: #112;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .modal-content h3 {
+            margin-top: 0;
+            color: #2db6ed;
+        }
+        .modal-content label {
+            display: block;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .modal-content input,
+        .modal-content select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: none;
+            font-size: 14px;
+        }
+        .modal-content button {
+            margin-top: 15px;
+            width: 100%;
+            padding: 10px;
+            background-color: #2db6ed;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .modal-content button:hover {
+            background-color: #1a81c2;
+        }
+        a i{
+            color: #fff;
+            font-size: 20px;
+            position: fixed;
+            top: 8px;
+            left: -180px;
+
+        }
+        a i:hover{
+            color: #2db6ed;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="card-container">
+        <h2>CARTE BANCAIRE</h2>
+        <div class="card">
+            <img class="chip-image" src="img/sim.jpg" alt="Chip Image" /> <!-- Image de la puce -->
+            <div class="title" id="cardName">Platinum</div>
+            <div class="subtitle" id="cardBank">Banque</div>
+            <div class="number" id="cardNumber">Carte non liée, veuillez cliquer pour lier la carte</div>
+            <div class="payment-logos" id="paymentLogos">
+                <img id="mtnLogo" src="img/payment 4.jpg" alt="MTN Mobile Money" />
+                <img id="waveLogo" src="img/payment 5.png" alt="Wave Money" />
+                <img id="moowLogo" src="img/payment 3.jpg" alt="Moow Money" />
+                <img id="visaLogo" src="img/visa-logo.png" alt="Visa" />
+            </div>
+            <div class="icons" id="cardIcons">
+                <i class="fas fa-pen" onclick="openModal()"></i>
+                <i class="fas fa-lock" onclick="delierCarte()"></i>
+            </div>
+        </div>
+        <a onclick="redirectToUser()"><i class="fa-solid fa-arrow-left"></i></a>
+        <p class="message">Une carte bancaire ne peut être liée qu'à un seul compte InfinityVest</p>
+    </div>
+    <button class="link-button" onclick="openModal()">Lier la carte</button>
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <h3>Modifier la carte</h3>
+            <p id="errorMessage" class="message" style="display: none;"></p>
+            <label for="nom">Nom</label>
+            <input type="text" id="nom" placeholder="Ex: Jean Dupont" />
+            <label for="banque">Sélectionner une banque</label>
+            <select id="banque">
+                <option value="">-- Choisir une banque --</option>
+                <option value="MTN Mobile Money">MTN Mobile Money</option>
+                <option value="Wave Money">Wave Money</option>
+                <option value="Moow Money">Moow Money</option>
+                <option value="Visa">Visa</option>
+            </select>
+            <label for="telephone">Numéro</label>
+            <input type="tel" id="telephone" placeholder="Ex: 0700000000" />
+            <button onclick="lierCarte()">Valider</button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedCard = JSON.parse(localStorage.getItem('savedCard'));
+            if (savedCard) {
+                document.getElementById('cardName').textContent = savedCard.nom;
+                document.getElementById('cardBank').textContent = savedCard.banque;
+                document.getElementById('cardNumber').textContent = savedCard.numero;
+                document.getElementById('cardIcons').style.display = 'flex';
+                // Afficher le logo correspondant à la méthode de paiement
+                document.getElementById('mtnLogo').style.display = savedCard.banque === "MTN Mobile Money" ? 'block' : 'none';
+                document.getElementById('waveLogo').style.display = savedCard.banque === "Wave Money" ? 'block' : 'none';
+                document.getElementById('moowLogo').style.display = savedCard.banque === "Moow Money" ? 'block' : 'none';
+                document.getElementById('visaLogo').style.display = savedCard.banque === "Visa" ? 'block' : 'none';
+            }
+        });
+        function openModal() {
+            document.getElementById('editModal').style.display = 'flex';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+        function closeModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+        function redirectToUser() {
+            window.location.href = "user.html"; // Remplacez par l'URL de votre page utilisateur
+        }
+        function lierCarte() {
+            const nom = document.getElementById('nom').value.trim();
+            const banque = document.getElementById('banque').value.trim();
+            const numero = document.getElementById('telephone').value.trim();
+            const errorMsg = document.getElementById('errorMessage');
+            errorMsg.style.display = 'none';
+            if (!nom || !banque || !numero) {
+                errorMsg.textContent = "Veuillez remplir tous les champs.";
+                errorMsg.style.display = 'block';
+                return;
+            }
+            // Validation du numéro selon la banque
+            if (banque === "MTN Mobile Money" && (!numero.startsWith("05") || numero.length !== 10)) {
+                errorMsg.textContent = "Le numéro MTN doit commencer par 05 et contenir 10 chiffres.";
+                errorMsg.style.display = 'block';
+                return;
+            }
+            if (banque === "Moow Money" && (!numero.startsWith("01") || numero.length !== 10)) {
+                errorMsg.textContent = "Le numéro Moow doit commencer par 01 et contenir 10 chiffres.";
+                errorMsg.style.display = 'block';
+                return;
+            }
+            if (banque === "Visa" && (!numero.startsWith("4") || numero.length !== 16)) {
+                errorMsg.textContent = "Le numéro Visa doit commencer par 4 et contenir 16 chiffres.";
+                errorMsg.style.display = 'block';
+                return;
+            }
+            if (banque === "Wave Money" && numero.length !== 13) {
+                errorMsg.textContent = "Le numéro Wave doit contenir 13 chiffres.";
+                errorMsg.style.display = 'block';
+                return;
+            }
+            // Sauvegarder les informations de la carte
+            const savedCard = { nom, banque, numero };
+            localStorage.setItem('savedCard', JSON.stringify(savedCard));
+            // Mettre à jour l'affichage
+            document.getElementById('cardName').textContent = nom;
+            document.getElementById('cardBank').textContent = banque;
+            document.getElementById('cardNumber').textContent = numero;
+            document.getElementById('cardIcons').style.display = 'flex';
+            // Afficher le logo correspondant à la méthode de paiement
+            document.getElementById('mtnLogo').style.display = banque === "MTN Mobile Money" ? 'block' : 'none';
+            document.getElementById('waveLogo').style.display = banque === "Wave Money" ? 'block' : 'none';
+            document.getElementById('moowLogo').style.display = banque === "Moow Money" ? 'block' : 'none';
+            document.getElementById('visaLogo').style.display = banque === "Visa" ? 'block' : 'none';
+            closeModal();
+        }
+        function delierCarte() {
+            localStorage.removeItem('savedCard');
+            document.getElementById('cardName').textContent = "Platinum";
+            document.getElementById('cardBank').textContent = "Banque";
+            document.getElementById('cardNumber').textContent = "Carte non liée, veuillez cliquer pour lier la carte";
+            document.getElementById('cardIcons').style.display = 'none';
+            // Masquer tous les logos
+            document.getElementById('mtnLogo').style.display = 'none';
+            document.getElementById('waveLogo').style.display = 'none';
+            document.getElementById('moowLogo').style.display = 'none';
+            document.getElementById('visaLogo').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

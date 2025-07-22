@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>InfinityVest - Connexion / Inscription</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #020b27, #001133);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: start;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 450px;
+        }
+        .logo {
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .logo span {
+            color: #00d4ff;
+        }
+        .vip-badge {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+            transition: opacity 0.5s ease;
+        }
+        .input-group {
+            display: flex;
+            overflow: hidden;
+        }
+        select, input[type="tel"], input[type="password"], input[type="text"] {
+            padding: 12px;
+            background-color: rgba(25, 25, 112, 0.5);
+            color: white;
+            border: 1px solid #2a3f5f;
+            flex: 1;
+            outline: none;
+            border-radius: 8px;
+        }
+        button {
+            padding: 15px;
+            background: linear-gradient(to right, #00aaff, #0077ff);
+            border: none;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+        .toggle-link {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #aaa;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .hidden {
+            display: none;
+        }
+        .info-section {
+            margin-top: 40px;
+        }
+        .banner-image {
+            width: 100%;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        .info-box {
+            background-color: rgba(0, 40, 80, 0.5);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #2a3f5f;
+        }
+        .info-box h3 {
+            margin-top: 0;
+            color: #00aaff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">Infinity<span>Vest</span></div>
+        <div class="vip-badge"></div>
+        <!-- Formulaire Connexion -->
+        <form method="POST" action="auth.php" id="loginForm">
+            <div class="input-group">
+                <select name="country_code" id="loginCountryCode">
+                    <option value="+225">+225</option>
+                    <option value="+33">+33</option>
+                    <option value="+221">+221</option>
+                </select>
+                <input type="tel" name="phone" id="loginPhone" placeholder="Numéro Téléphone" required>
+            </div>
+            <input type="password" name="password" id="loginPassword" placeholder="Veuillez entrer le mot de passe" required>
+            <button type="submit" name="login">Connexion Immédiate</button>
+        </form>
+        <!-- Formulaire Inscription -->
+        <form method="POST" action="auth.php" id="registerForm" class="hidden">
+            <div class="input-group">
+                <select name="country_code" id="registerCountryCode">
+                    <option value="+225">+225</option>
+                    <option value="+33">+33</option>
+                    <option value="+221">+221</option>
+                </select>
+                <input type="tel" name="phone" id="registerPhone" placeholder="Numéro Téléphone" required>
+            </div>
+            <input type="password" name="password" id="registerPassword" placeholder="Veuillez entrer le mot de passe" required>
+            <input type="password" name="confirm" id="registerConfirmPassword" placeholder="Veuillez entrer à nouveau le mot de passe" required>
+            <input type="text" name="invitation_code" id="invitationCode" placeholder="Veuillez entrer le code d'invitation">
+            <button type="submit" name="register">Inscription Immédiate</button>
+        </form>
+        <div id="toggleForm" class="toggle-link">Pas encore de compte ? Inscrivez-vous</div>
+        <div class="info-section">
+            <img src="banniere.jpg" alt="Bannière InfinityVest" class="banner-image">
+            <div class="info-box">
+                <h3>1. Excellente performance</h3>
+                <p>Nous continuons à investir dans les mises à niveau et la maintenance des serveurs pour garantir une puissance de calcul élevée, un fonctionnement stable et une faible latence.</p>
+            </div>
+            <div class="info-box">
+                <h3>2. Service personnalisé</h3>
+                <p>Nos solutions sont flexibles et adaptées aux besoins spécifiques de chaque utilisateur.</p>
+            </div>
+            <div class="info-box">
+                <h3>3. Équipe professionnelle</h3>
+                <p>Une équipe expérimentée surveille le système en continu pour assurer un service stable et performant.</p>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script>
+        const loginForm = document.getElementById("loginForm");
+        const registerForm = document.getElementById("registerForm");
+        const toggleFormLink = document.getElementById("toggleForm");
+        // Basculer entre connexion et inscription
+        toggleFormLink.addEventListener("click", () => {
+            loginForm.classList.toggle("hidden");
+            registerForm.classList.toggle("hidden");
+            toggleFormLink.textContent = loginForm.classList.contains("hidden")
+                ? "Déjà un compte ? Connectez-vous"
+                : "Pas encore de compte ? Inscrivez-vous";
+        });
+        // Connexion
+        loginForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const code = document.getElementById("loginCountryCode").value;
+            const phone = document.getElementById("loginPhone").value.trim();
+            const password = document.getElementById("loginPassword").value.trim();
+            if (!validatePhone(phone)) {
+                alert("Veuillez entrer un numéro de téléphone valide.");
+                return;
+            }
+            const users = JSON.parse(localStorage.getItem("users") || "[]");
+            const user = users.find((u) => u.phone === code + phone);
+            if (!user) {
+                alert("Utilisateur non trouvé. Veuillez vérifier votre numéro de téléphone.");
+                return;
+            }
+            if (user.password !== hashPassword(password)) {
+                alert("Mot de passe incorrect. Veuillez réessayer.");
+                return;
+            }
+            // Stocker l'ID de l'utilisateur connecté
+            localStorage.setItem("currentUserId", user.id);
+            alert("Connexion réussie !");
+            window.location.href = `reussi.html?id=${user.id}`;
+        });
+        // Inscription
+        registerForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const code = document.getElementById("registerCountryCode").value;
+            const phone = document.getElementById("registerPhone").value.trim();
+            const password = document.getElementById("registerPassword").value.trim();
+            const confirmPassword = document.getElementById("registerConfirmPassword").value.trim();
+            const invitationCode = document.getElementById("invitationCode").value.trim();
+            if (!validatePhone(phone)) {
+                alert("Veuillez entrer un numéro de téléphone valide.");
+                return;
+            }
+            if (password.length < 6) {
+                alert("Le mot de passe doit contenir au moins 6 caractères.");
+                return;
+            }
+            if (password !== confirmPassword) {
+                alert("Les mots de passe ne correspondent pas !");
+                return;
+            }
+            const users = JSON.parse(localStorage.getItem("users") || "[]");
+            if (users.some((u) => u.phone === code + phone)) {
+                alert("Numéro de téléphone déjà utilisé. Veuillez vous connecter.");
+                return;
+            }
+            const userId = generateUniqueId();
+            users.push({
+                id: userId,
+                phone: code + phone,
+                password: hashPassword(password),
+                invitationCode: invitationCode || null,
+            });
+            localStorage.setItem("users", JSON.stringify(users));
+            alert("Inscription réussie ! Vous pouvez maintenant vous connecter.");
+            registerForm.classList.add("hidden");
+            loginForm.classList.remove("hidden");
+            toggleFormLink.textContent = "Pas encore de compte ? Inscrivez-vous";
+        });
+        // Fonction pour hacher le mot de passe
+        function hashPassword(password) {
+            return CryptoJS.SHA256(password).toString(CryptoJS.enc.Base64);
+        }
+        // Fonction pour valider le numéro de téléphone
+        function validatePhone(phone) {
+            const phoneRegex = /^[0-9]{8,15}$/;
+            return phoneRegex.test(phone);
+        }
+        // Fonction pour générer un ID unique
+        function generateUniqueId() {
+            return 'user-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+        }
+        // Initialiser ou charger les données utilisateur
+        function initialiserUtilisateur() {
+            const utilisateur = {
+                achats: JSON.parse(localStorage.getItem("achatsUtilisateur")) || [],
+                invites: JSON.parse(localStorage.getItem("invitesUtilisateur")) || [],
+                totalEquipe: parseInt(localStorage.getItem("tailleEquipe")) || 0
+            };
+            const vipLevel = calculerNiveauVIP(utilisateur);
+            localStorage.setItem("vipLevel", vipLevel);
+            mettreAJourBadgeVIP(vipLevel);
+        }
+        // Mettre à jour le badge VIP
+        function mettreAJourBadgeVIP(vipLevel) {
+            const badge = document.querySelector(".vip-badge");
+            if (badge) {
+                badge.textContent = vipLevel > 0 ? "VIP" + vipLevel : "VIP0";
+            }
+        }
+        // Initialisation au chargement de la page
+        window.onload = function() {
+            initialiserUtilisateur();
+        };
+    </script>
+</body>
+</html>

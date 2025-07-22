@@ -1,0 +1,152 @@
+<!DOCTYPE html><html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Règle Mise à Niveau VIP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1A1F50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #2A2F60;
+            padding: 2px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+        }
+        .vip-level {
+            background: linear-gradient(135deg, #3A3F70, #2A2F60);
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+        .vip-title {
+            font-weight: bold;
+            color: gold;
+        }
+        .reward-table {
+            width: 100%;
+            margin-top: 10px;
+            border-collapse: collapse;
+        }
+        .reward-table th, .reward-table td {
+            padding: 5px;
+            border: 1px solid white;
+        }
+        .profile-icon {
+            position: fixed;
+            bottom: 180px;
+            right: 0;
+            
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-top: 50px;
+        }
+
+       
+
+       /* Styles pour la boîte modale */
+       .modal {
+            display: none; /* Masquer par défaut */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex; /* Afficher la modale */
+        }
+
+        .modal .container {
+           background: #112866;
+           padding: 10px 20px;
+           border-radius: 10px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 220px;
+            right: 485px;
+            border: none;
+            border-radius: 5px;
+            width: 30px;
+            height: 30px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            background: #e04e4e;
+        }
+
+        span img{
+            width: 50px;
+            height: 50px;
+            border-radius: 100%;
+        }
+        .contact a{
+            color: #fff;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button onclick="history.back()" style="background: none; border: none; color: white; cursor: pointer; font-size: 20px; display: flex; align-items: center; margin-bottom: 10px;">
+            <span>&#8592;</span>
+        </button>
+        <h1>Règle Mise à Niveau VIP</h1>
+        <div id="vipLevels"></div>
+    </div><script>
+    const vipData = [
+        { level: 'VIP0', rewards: 15, b: '0.00%', c: '0.00%', d: '0.00%' },
+        { level: 'VIP1', rewards: 30, b: '8.00%', c: '2.00%', d: '1.00%' },
+        { level: 'VIP2', rewards: 50, b: '9.00%', c: '2.00%', d: '1.00%' },
+        { level: 'VIP3', rewards: 100, b: '9.00%', c: '2.50%', d: '1.00%' },
+        { level: 'VIP4', rewards: 155, b: '9.00%', c: '2.50%', d: '1.50%' },
+        { level: 'VIP5', rewards: 250, b: '10.00%', c: '2.50%', d: '1.50%' },
+        { level: 'VIP6', rewards: 500, b: '10.00%', c: '3.00%', d: '1.50%' },
+        { level: 'VIP7', rewards: 850, b: '10.00%', c: '3.00%', d: '2.00%' }
+    ];
+
+    const vipContainer = document.getElementById('vipLevels');
+
+    vipData.forEach(vip => {
+        const div = document.createElement('div');
+        div.classList.add('vip-level');
+        div.innerHTML = `
+            <div class="vip-title">${vip.level}</div>
+            <table class="reward-table">
+                <tr>
+                    <th>B-Niveau</th><th>C-Niveau</th><th>D-Niveau</th><th>Récompense</th>
+                </tr>
+                <tr>
+                    <td>${vip.b}</td>
+                    <td>${vip.c}</td>
+                    <td>${vip.d}</td>
+                    <td>${vip.rewards}</td>
+                </tr>
+            </table>
+        `;
+        vipContainer.appendChild(div);
+    });
+</script>
+
+</body>
+</html>

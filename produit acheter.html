@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"> <!-- Font Awesome -->
+  <title>Produits Achetés</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #020a18;
+      color: white;
+      margin: 0;
+      padding: 20px;
+    }
+    .product {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    .product-details {
+      flex: 1;
+    }
+    .product h3 {
+      margin: 0 0 10px;
+    }
+    .product p {
+      margin: 5px 0;
+    }
+    .receive-button {
+      background-color: #007bff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+    }
+    .receive-button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Produits Achetés</h1>
+  <button onclick="resetPurchasedProducts()" style="margin-bottom: 20px; background-color: #dc3545; border: none; padding: 10px 20px; border-radius: 8px; color: white; cursor: pointer;">Réinitialiser</button>
+  <div id="productsContainer"></div>
+
+  <script>
+    function loadPurchasedProducts() {
+      const productsContainer = document.getElementById('productsContainer');
+      const purchasedProducts = JSON.parse(localStorage.getItem('purchasedProducts')) || [];
+
+      // Ajout des informations venant de product4.html
+      const productInfo = JSON.parse(localStorage.getItem('productInfo'));
+      if (productInfo) {
+        purchasedProducts.push({
+          nom: "PRO-10",
+          prix: productInfo.prix,
+          revenusJournaliers: productInfo.revenusJournaliers,
+          dureeValidite: parseInt(productInfo.dureeRestante.replace(' jours', ''), 10),
+          montantRecu: parseInt(productInfo.montantRecu.replace(' FCFA', ''), 10)
+        });
+        localStorage.setItem('purchasedProducts', JSON.stringify(purchasedProducts));
+        localStorage.removeItem('productInfo'); // Supprimer après ajout
+      }
+
+      if (purchasedProducts.length === 0) {
+        productsContainer.innerHTML = "<p>Aucun produit acheté.</p>";
+        return;
+      }
+
+      purchasedProducts.forEach((product, index) => {
+        const productDiv = document.createElement('div');
+        productDiv.className = 'product';
+        productDiv.innerHTML = `
+          <div class="product-details">
+            <h3>${product.nom}</h3>
+            <p><strong>Prix :</strong> ${product.prix}</p>
+            <p><strong>Revenus journaliers :</strong> ${product.revenusJournaliers}</p>
+            <p><strong>Durée restante :</strong> ${product.dureeValidite} jours</p>
+            <p><strong>Montant reçu :</strong> ${product.montantRecu} FCFA</p>
+          </div>
+          <button class="receive-button" onclick="collectDailyRevenue(${index})">Recevoir</button>
+        `;
+        productsContainer.appendChild(productDiv);
+      });
+    }
+
+    function collectDailyRevenue(index) {
+      const purchasedProducts = JSON.parse(localStorage.getItem('purchasedProducts')) || [];
+      const product = purchasedProducts[index];
+
+      if (product.dureeValidite > 0) {
+        product.montantRecu += parseInt(product.revenusJournaliers.replace(/\D/g, ''));
+        product.dureeValidite -= 1;
+
+        purchasedProducts[index] = product;
+        localStorage.setItem('purchasedProducts', JSON.stringify(purchasedProducts));
+
+        // Mise à jour du portefeuille
+        const userWallet = parseInt(localStorage.getItem('userWallet') || '0', 10);
+        const dailyRevenue = parseInt(product.revenusJournaliers.replace(/\D/g, ''), 10);
+        localStorage.setItem('userWallet', userWallet + dailyRevenue);
+
+        alert(`Vous avez reçu ${product.revenusJournaliers}. Nouveau montant reçu : ${product.montantRecu} FCFA`);
+        location.reload();
+      } else {
+        alert("La période de validité de ce produit est expirée.");
+      }
+    }
+
+    function resetPurchasedProducts() {
+      if (confirm("Êtes-vous sûr de vouloir réinitialiser tous les produits achetés ?")) {
+        localStorage.removeItem('purchasedProducts');
+        alert("Tous les produits achetés ont été réinitialisés.");
+        location.reload();
+      }
+    }
+
+    loadPurchasedProducts();
+  </script>
+</body>
+</html>

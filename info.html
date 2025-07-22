@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>À propos de nous - InfinityVest</title>
+    <style>
+        /* Style global */
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+            background: #0a0f1a;
+            color: white;
+            line-height: 1.8;
+        }
+
+        /* Barre "À PROPOS DE NOUS" (fixe en haut) */
+        .header-bar {
+            position: fixed; /* Barre fixe */
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #1b263b;
+            color: #4db8ff;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 2rem;
+            text-transform: uppercase;
+            z-index: 1000; /* Assure qu'elle reste au-dessus */
+        }
+
+        /* Contenu principal */
+        .about-container {
+            padding: 150px 20px 50px; /* Espace en haut pour éviter de cacher le contenu */
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        /* Image */
+        .about-image {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .about-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+       
+
+       
+
+        /* Texte mis en valeur */
+        .highlight {
+            font-weight: bold;
+            font-size: 1.3rem;
+            color: #4db8ff;
+            margin-top: 40px;
+        }
+
+        /* Pied de page */
+        .footer {
+            background: #1b263b;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .footer p {
+            margin: 0;
+            font-size: 1rem;
+        }
+        .profile-icon {
+            position: fixed;
+            bottom: 180px;
+            right: 0;
+          
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-top: 50px;
+        }
+
+       
+
+       /* Styles pour la boîte modale */
+       .modal {
+            display: none; /* Masquer par défaut */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex; /* Afficher la modale */
+        }
+
+        .modal .container {
+            background: #112866; 
+          padding:0 20px;
+           border-radius: 10px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 226px;
+            right: 479px;
+            border: none;
+            border-radius: 5px;
+            width: 30px;
+            height: 30px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            color: #fff;
+        }
+
+        .contact{
+            margin: 10px;
+            font-size: 16px;
+            color: #fff;
+        }
+        .contact a{
+            color: #fff;
+            text-decoration: none;
+        }
+
+        span img{
+            width: 50px;
+            height: 50px;
+            border-radius: 100%;
+        }
+       
+    </style>
+</head>
+
+<body>
+
+    <!-- Barre "À PROPOS DE NOUS" (fixe en haut) -->
+    <div class="header-bar">
+        <i class="fa-solid fa-circle-left"></i>
+        À PROPOS DE NOUS
+    </div>
+
+    <!-- Section principale (image + texte) -->
+    <section class="about-container">
+
+        <!-- Image (modifiez le chemin si nécessaire) -->
+        <div class="about-image">
+            <img src="business-model.png" alt="InfinityVest Business Model">
+        </div>
+
+        <!-- Texte existant -->
+        <p>Nos serveurs présentent les avantages significatifs suivants :</p>
+
+        <p><strong>1. Excellentes performances</strong></p>
+
+        <p>
+            Nous continuons d'investir beaucoup de ressources dans les mises à niveau matérielles et la maintenance
+            des serveurs pour garantir que les serveurs disposent d'une puissance de calcul élevée, d'un état de
+            fonctionnement stable et d'une vitesse de réponse à faible latence.
+        </p>
+
+        <p>
+            Qu'il s'agisse d'une entreprise de réseau ayant des exigences extrêmement élevées en matière de stabilité,
+            d'une entreprise d'IA nécessitant un support informatique solide, ou d'une société de jeux recherchant une
+            expérience fluide, nos serveurs peuvent répondre à leurs besoins rigoureux.
+        </p>
+
+        <p class="highlight">Aujourd'hui est le jour où vos rêves financiers prennent vie.</p>
+
+        <p>
+            Chez <strong>InfinityVest</strong>, nous croyons fermement que chaque grand parcours commence par une seule étape,
+            et cette étape pourrait changer votre vie. Imaginez un avenir où vos investissements travaillent aussi dur
+            que vous. Un avenir où vos ambitions financières ne connaissent aucune limite.
+        </p>
+
+        <p>
+            Le moment est venu de croire en votre potentiel, d'agir avec audace et de façonner la réussite que vous
+            méritez. Avec InfinityVest, vous n'investissez pas seulement de l'argent, vous investissez en vous-même.
+        </p>
+
+        <p class="highlight">Alors, pourquoi attendre ? Prenez votre destin en main dès aujourd'hui.</p>
+
+        <!-- Nouveau texte ajouté -->
+        <p class="highlight">Chez InfinityVest, nous repoussons les frontières de l'investissement.</p>
+
+        <p>
+            Notre mission est claire : créer un monde d'opportunités illimitées pour ceux qui croient en leur potentiel.
+            Avec nous, il n'y a pas de limites—seulement des perspectives infinies de succès.
+        </p>
+
+        <p>
+            Que vous visiez à bâtir un patrimoine solide ou à générer des revenus élevés, nous vous offrons les outils,
+            l'expertise et le soutien pour transformer vos rêves financiers en réalité.
+        </p>
+
+        <p>
+            Chez InfinityVest, chaque étape que vous franchissez est un pas vers un avenir sans limites. Alors,
+            n'attendez plus : investissez dès aujourd'hui et découvrez à quel point votre succès peut être grand.
+        </p>
+
+        <!-- Deuxième image (modifiez le chemin si nécessaire) -->
+        <div class="about-image">
+            <img src="document.png" alt="Document officiel InfinityVest">
+        </div>
+
+    </section>
+
+    <!-- Pied de page -->
+    <footer class="footer">
+        <p>&copy; 2025 InfinityVest. Tous droits réservés.</p>
+    </footer>
+    <div class="profile-icon" onclick="window.location.href='contactservice.html'"></div>
+    <i class="profile-icon" onclick="openModal()"><span><img src="img/service client.jpg" alt=""></span></i>
+
+    <div id="serviceModal" class="modal">
+        <div class="container">
+            <button class="close-btn" onclick="closeModal()">×</button>
+            <h2>Contactez notre Service Client</h2>
+            <p class="contact">📞 Ligne 1 : <a href="https://wa.me/2250502056302" target="_blank">+225 0502056302</a></p>
+            <p class="contact">📞 Ligne 2 : <a href="https://wa.me/2250719455161" target="_blank">+225 0719455161</a></p>
+            <p class="contact">📞 Ligne 3 : <a href="https://wa.me/2250799343386" target="_blank">+225 0799343386</a></p>
+        </div>
+    </div>
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+
+        function openModal() {
+            document.getElementById('serviceModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('serviceModal').classList.remove('active');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Tableau de Bord - InfinityVest</title>
+    <style>
+        /* Style général */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #00008d;
+            color: white;
+            box-sizing: border-box;
+            overflow-y: auto; /* Permet le défilement */
+        }
+        .container {
+            padding: 20px;
+            padding-bottom: 100px; /* Laisse de l'espace pour le menu fixe */
+        }
+        /* Header */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px; /* Augmente l'espacement entre les éléments */
+        }
+        .logo {
+            width: 40px;
+            border-radius: 50%;
+        }
+        .vip-badge {
+            background: orange;
+            padding: 3px 8px;
+            border-radius: 12px;
+        }
+        /* Tableau de bord */
+        .dashboard {
+            margin-top: 20px;
+        }
+        .total-gains {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #4e4eaf;
+            border-radius: 10px;
+            padding: 15px;
+        }
+        .amount {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .record-link {
+            color: greenyellow;
+            text-decoration: none;
+            font-size: 18px;
+        }
+        .daily-gain,
+        .wallets,
+        .transactions {
+            margin: 15px 0;
+        }
+        /* Dividendes */
+        .fund-dividend {
+            background: #0077ff;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        /* Boutons d'action */
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            font-size: 20px;
+            cursor: pointer;
+            color: white;
+        }
+        .retrait button,
+        button:first-child {
+            background: blue;
+            padding: 10px 20px; /* Assure une taille uniforme */
+        }
+        button:last-child {
+            background: #4CAF50;
+            padding: 5px 12px; /* Ajusté pour correspondre */
+        }
+        /* Menu supplémentaire */
+        .extra-menu {
+            margin-top: 20px;
+        }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .menu-grid div {
+            padding: 10px;
+            border-radius: 150px;
+            background: rgba(259, 259, 259, 0.2);
+            cursor: pointer;
+        }
+        .settings a {
+            display: block;
+            padding: 10px 0;
+            border-bottom: 1px solid #4e4eaf;
+            color: white;
+            text-decoration: none;
+        }
+        .settings a:last-child {
+            border-bottom: none;
+        }
+        /* Menu fixe en bas */
+        .footer-menu {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 15, 41, 0.95);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid rgba(10, 15, 41, 0.95);
+            border-radius: 25px;
+        }
+        .footer-menu button a {
+            text-decoration: none;
+            color: #333;
+            font-size: 24px;
+        }
+        .deposit {
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #e0f7fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            max-width: 600px;
+        }
+        .deposit p {
+            font-size: 16px;
+            color: #333;
+            text-align: center;
+        }
+        .nav-item {
+            text-align: center;
+            cursor: pointer;
+        }
+        .nav-item span {
+            display: block;
+            font-size: 14px;
+        }
+        .profile-icon {
+            position: fixed;
+            bottom: 180px;
+            right: 0;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-top: 50px;
+        }
+        /* Styles pour la boîte modale */
+        .modal {
+            display: none; /* Masquer par défaut */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal.active {
+            display: flex; /* Afficher la modale */
+        }
+        .modal .container {
+            background: #112866;
+            padding: 10px 20px;
+            border-radius: 10px;
+        }
+        .close-btn {
+            position: absolute;
+            top: 212px;
+            right: 472px;
+            border: none;
+            border-radius: 5px;
+            width: 30px;
+            height: 30px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        span img {
+            width: 50px;
+            height: 50px;
+            border-radius: 100%;
+        }
+        .contact a {
+            color: #fff;
+        }
+        .history-link {
+            color: #ddd;
+        }
+        .history-link span {
+            color: black;
+            border-radius: 100px;
+            background-color: #00c853;
+        }
+        .user-id {
+            font-weight: bold;
+            cursor: pointer; /* Ajout du curseur pour indiquer que l'élément est cliquable */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- En-tête -->
+        <header>
+            <div class="user-info">
+                <img src="logo.png" alt="Logo" class="logo">
+                <span class="user-id"></span>
+                <span class="vip-badge" onclick="openVipRules()">🌞VIP0</span>
+            </div>
+        </header>
+        <!-- Tableau de bord -->
+        <section class="dashboard">
+            <div class="total-gains">
+                <h2>Total Gains</h2>
+                <p class="amount" id="totalGains">0.00 FCFA</p>
+                <a href="detaile financement.html" class="record-link">Record</a>
+            </div>
+            <div class="daily-gain">
+                <span>💰 Gains du jour</span>
+                <p id="totalGainsElement">0.00 FCFA</p>
+            </div>
+            <div class="wallets">
+                <div>
+                    <p>Portefeuille Recharge : <span id="rechargeElement">0.00 FCFA</span></p>
+                    <p>Portefeuille Revenus : <span id="walletAmount">0.00</span> FCFA</p> <!-- Montant initial -->
+                </div>
+            </div>
+            <div class="transactions">
+                <p>Total Recharges : <span id="totalRecharges">0.00 FCFA</span></p>
+                <p>Total Retraits : <span id="totalRetraits">0.00 FCFA</span></p>
+                <a href="historique_retraits.html" class="history-link">Historique Retraits <span>➜</span></a>
+            </div>
+        </section>
+        <!-- Boutons d'actions -->
+        <div class="action-buttons">
+            <div class="retrait"><button onclick="window.location.href='retrait.html'">Retrait</button></div>
+            <button onclick="window.location.href='methode.html'">Recharge</button>
+        </div>
+        <!-- Menu supplémentaire -->
+        <div class="extra-menu">
+            <div class="menu-grid">
+                <div onclick="redirectToPointage()">📌Pointage</div>
+                <div onclick="redirectToExchange()">💵 Code Échange</div>
+                <div onclick="redirectToProduit()">📱 Mes Appareils</div>
+                <div onclick="redirectToEquipe()">👥 Mon équipe</div>
+                <div onclick="redirectToCoupon()">🎟 Coupons</div>
+                <div onclick="redirectToTache()">💬 Prix Tâche</div>
+                <div onclick="redirectToBanque()">💳 Carte Bancaire</div>
+                <div onclick="redirectToInvité()">🔗 Inviter Amis</div>
+            </div>
+        </div>
+        <!-- Paramètres -->
+        <div class="settings">
+            <a href="#" onclick="redirectToAdresse()">Mon adresse ➜</a>
+            <a href="#" onclick="redirectToCode()">Changer le mot de passe ➜</a>
+            <a href="#" onclick="openLanguageModal()">Changer de langue ➜</a>
+            <a href="#">Centre Règles ➜</a>
+            <a href="#">FAQ ➜</a>
+            <a href="#" onclick="logout()">Déconnexion ➜</a>
+        </div>
+    </div>
+    <!-- Page d'avertissement -->
+    <div id="warningPage" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 15, 41, 0.9); color: white; z-index: 1000; display: none; flex-direction: column; justify-content: center; align-items: center;">
+        <div style="background: #1A1F50; padding: 20px; border-radius: 10px; text-align: center; width: 80%; max-width: 400px;">
+            <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
+            <div style="display: flex; justify-content: space-around; margin-top: 20px;">
+                <button onclick="hideWarningPage()" style="background: #e53935; padding: 10px 20px; border: none; border-radius: 5px; color: white; cursor: pointer;">Annuler</button>
+                <button onclick="confirmDeconnexion()" style="background: #43a047; padding: 10px 20px; border: none; border-radius: 5px; color: white; cursor: pointer;">Confirmer</button>
+            </div>
+        </div>
+    </div>
+    <!-- Modale pour sélectionner la langue -->
+    <div id="languageModal" class="modal">
+        <div class="container">
+            <button class="close-btn" onclick="closeLanguageModal()">×</button>
+            <h2>Choisissez votre langue</h2>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 20px; margin: 20px 0;">
+                <button onclick="selectLanguage('Français')" style="padding: 10px 20px; border: none; border-radius: 5px; background: #0077ff; color: white; cursor: pointer;">Français</button>
+                <button onclick="selectLanguage('English')" style="padding: 10px 20px; border: none; border-radius: 5px; background: #4CAF50; color: white; cursor: pointer;">English</button>
+            </div>
+            <div style="display: flex; justify-content: space-around; margin-top: 20px;">
+                <button onclick="cancelLanguageSelection()" style="background: #e53935; padding: 10px 20px; border: none; border-radius: 5px; color: white; cursor: pointer;">Annuler</button>
+                <button onclick="confirmLanguageSelection()" style="background: #43a047; padding: 10px 20px; border: none; border-radius: 5px; color: white; cursor: pointer;">Confirmer</button>
+            </div>
+        </div>
+    </div>
+    <!-- Navigation fixe en bas -->
+    <footer>
+        <div class="footer-menu">
+            <button><a href="javascript:void(0);" onclick="redirectToReussi()"><i class="fa fa-home"></i></a></button>
+            <button><a href="parametre.html"><i class="fa-solid fa-bars"></i></a></button>
+            <button><a href="info.html"><i class="fa-solid fa-circle-info"></i></a></button>
+            <button><a href="user.html" onclick="redirectToLogin()"><i class="fa fa-user"></i></a></button>
+        </div>
+    </footer>
+    <div class="profile-icon" onclick="window.location.href='contactservice.html'"></div>
+    <i class="profile-icon" onclick="openModal()"><span><img src="img/service client.jpg" alt=""></span></i>
+    <div id="serviceModal" class="modal">
+        <div class="container">
+            <button class="close-btn" onclick="closeModal()">×</button>
+            <h2>Contactez notre Service Client</h2>
+            <p class="contact">📞 Ligne 1 : <a href="https://wa.me/2250502056302" target="_blank">+225 0502056302</a></p>
+            <p class="contact">📞 Ligne 2 : <a href="https://wa.me/2250719455161" target="_blank">+225 0719455161</a></p>
+            <p class="contact">📞 Ligne 3 : <a href="https://wa.me/2250799343386" target="_blank">+225 0799343386</a></p>
+        </div>
+    </div>
+    <script>
+        // Initialisation des données au chargement de la page
+        document.addEventListener('DOMContentLoaded', () => {
+            const portefeuilleRevenus = parseFloat(localStorage.getItem('portefeuilleRevenus') || '0');
+            document.getElementById('walletAmount').textContent = `${portefeuilleRevenus.toFixed(2)} FCFA`;
+            const portefeuilleRecharge = parseFloat(localStorage.getItem('portefeuilleRecharge') || '0');
+            document.getElementById('rechargeElement').textContent = `${portefeuilleRecharge.toFixed(2)} FCFA`;
+            const totalGains = portefeuilleRevenus + portefeuilleRecharge;
+            document.getElementById('totalGains').textContent = `${totalGains.toFixed(2)} FCFA`;
+            localStorage.setItem('totalGains', totalGains.toFixed(2));
+            const gainsJour = parseFloat(localStorage.getItem('gainDuJour') || '0');
+            document.getElementById('totalGainsElement').textContent = `${gainsJour.toFixed(2)} FCFA`;
+            const totalRecharges = parseFloat(localStorage.getItem('totalRecharges') || '0');
+            document.getElementById('totalRecharges').textContent = `${totalRecharges.toFixed(2)} FCFA`;
+            const totalRetraits = parseFloat(localStorage.getItem('totalRetraits') || '0');
+            document.getElementById('totalRetraits').textContent = `${totalRetraits.toFixed(2)} FCFA`;
+            // Affiche un ID utilisateur fictif
+            const userIdElement = document.querySelector('.user-id');
+            const storedUserId = localStorage.getItem('userId') || generateRandomUserId();
+            userIdElement.textContent = `ID : ${storedUserId}`;
+            localStorage.setItem('userId', storedUserId);
+        });
+        function generateRandomUserId() {
+            return 'IV' + Math.floor(100000 + Math.random() * 900000);
+        }
+        // Fonction pour calculer le niveau VIP
+        function calculerNiveauVIP(utilisateur) {
+            let vip = 0;
+            // VIP 1 : Acheté un produit
+            if (utilisateur.achats && utilisateur.achats.length > 0) {
+                vip = 1;
+            } else {
+                return vip;
+            }
+            // VIP 2 : A invité 3 personnes qui sont au VIP1
+            const vip1Count = utilisateur.invites.filter(inv => inv.vip === 1).length;
+            if (vip1Count >= 3) {
+                vip = 2;
+            } else {
+                return vip;
+            }
+            // VIP 3 : A 3 subordonnés au VIP2
+            const vip2Count = utilisateur.invites.filter(inv => inv.vip === 2).length;
+            if (vip2Count >= 3) {
+                vip = 3;
+            } else {
+                return vip;
+            }
+            // VIP 4 : A 4 VIP3 et 100 personnes dans l’équipe
+            const vip3Count = utilisateur.invites.filter(inv => inv.vip === 3).length;
+            if (vip3Count >= 4 && utilisateur.totalEquipe >= 100) {
+                vip = 4;
+            } else {
+                return vip;
+            }
+            // VIP 5 : A 4 VIP4 et 300 dans l’équipe
+            const vip4Count = utilisateur.invites.filter(inv => inv.vip === 4).length;
+            if (vip4Count >= 4 && utilisateur.totalEquipe >= 300) {
+                vip = 5;
+            } else {
+                return vip;
+            }
+            // VIP 6 : A 4 VIP5 et 500 dans l’équipe
+            const vip5Count = utilisateur.invites.filter(inv => inv.vip === 5).length;
+            if (vip5Count >= 4 && utilisateur.totalEquipe >= 500) {
+                vip = 6;
+            } else {
+                return vip;
+            }
+            // VIP 7 : A 3 VIP6 et 800 dans l’équipe
+            const vip6Count = utilisateur.invites.filter(inv => inv.vip === 6).length;
+            if (vip6Count >= 3 && utilisateur.totalEquipe >= 800) {
+                vip = 7;
+            }
+            return vip;
+        }
+        // Fonction pour initialiser ou charger les données de l'utilisateur
+        function initialiserUtilisateur() {
+            const utilisateur = {
+                achats: JSON.parse(localStorage.getItem("achatsUtilisateur")) || [],
+                invites: JSON.parse(localStorage.getItem("invitesUtilisateur")) || [],
+                totalEquipe: parseInt(localStorage.getItem("tailleEquipe")) || 0
+            };
+            // Recalculer le niveau VIP
+            const vipLevel = calculerNiveauVIP(utilisateur);
+            // Enregistrer le niveau VIP dans le localStorage
+            localStorage.setItem("vipLevel", vipLevel);
+            // Mettre à jour l'affichage du badge VIP
+            mettreAJourBadgeVIP(vipLevel);
+        }
+        // Fonction pour mettre à jour le badge VIP sur la page
+        function mettreAJourBadgeVIP(vipLevel) {
+            const badge = document.querySelector(".vip-badge");
+            if (badge) {
+                badge.textContent = "VIP" + vipLevel; // Mettre à jour le badge avec le niveau
+            }
+        }
+        // Fonction pour confirmer l'achat et mettre à jour les données
+        function confirmerAchat() {
+            // Exemple de produit acheté
+            const produit = { nom: "Produit XYZ", prix: 100 };
+            // Ajouter l'achat dans le localStorage
+            let achats = JSON.parse(localStorage.getItem("achatsUtilisateur")) || [];
+            achats.push(produit);
+            localStorage.setItem("achatsUtilisateur", JSON.stringify(achats));
+            // Recalculer le niveau VIP après l'achat
+            initialiserUtilisateur();  // Recalculer et mettre à jour le badge VIP
+        }
+        // Appeler la fonction lors du chargement de la page pour initialiser l'utilisateur
+        window.onload = function() {
+            initialiserUtilisateur();  // Charger les données et initialiser le niveau VIP au démarrage
+        };
+        // Déconnexion avec confirmation
+        function logout() {
+            localStorage.removeItem("currentUserId");
+            alert("Déconnexion réussie !");
+            window.location.href = "connexion.html";
+        }
+        function hideWarningPage() {
+            document.getElementById('warningPage').style.display = 'none';
+        }
+        function confirmDeconnexion() {
+            localStorage.clear();
+            window.location.href = "connexion.html";
+        }
+        // Ouvrir la page des règles VIP
+        function openVipRules() {
+            alert("Accédez à un niveau VIP supérieur pour plus d'avantages !");
+        }
+        // Ouvrir la modale de sélection de langue
+        function openLanguageModal() {
+            document.getElementById('languageModal').classList.add('active');
+        }
+        // Fermer la modale de sélection de langue
+        function closeLanguageModal() {
+            document.getElementById('languageModal').classList.remove('active');
+        }
+        // Sélectionner la langue
+        let selectedLanguage = ''; // Assurez-vous que cette variable est utilisée
+        function selectLanguage(langue) {
+            selectedLanguage = langue;
+            alert(`Langue sélectionnée : ${langue}`);
+        }
+        function confirmLanguageSelection() {
+            if (selectedLanguage) {
+                localStorage.setItem('selectedLanguage', selectedLanguage);
+                closeLanguageModal();
+            }
+        }
+        function cancelLanguageSelection() {
+            selectedLanguage = '';
+            closeLanguageModal();
+        }
+        // Service Client
+        function openModal() {
+            document.getElementById('serviceModal').classList.add('active');
+        }
+        function closeModal() {
+            document.getElementById('serviceModal').classList.remove('active');
+        }
+    </script>
+</body>
+</html>

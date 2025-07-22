@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jour Pointage</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #010622;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      background: linear-gradient(to bottom right, #b0dfff, #cfeeff);
+      border-radius: 20px;
+      padding: 20px;
+      margin-top: 50px;
+      width: 80%;
+      max-width: 400px;
+      position: relative;
+      margin-top:200px;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #2473e2;
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+    .calendar-icon {
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
+    }
+    .days {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      background: rgb(20, 110, 260);
+      padding: 29px 20px;
+      border-radius: 18px;
+    }
+    .day {
+      background: #ade4ff;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+      color: #333;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .day img {
+      width: 20px;
+      margin-top: 5px;
+    }
+    .day.special img {
+      width: 25px;
+    }
+    .btn-pointage {
+      position: absolute;
+      top: 350px;
+      right: 150px;
+      padding: 15px 30px;
+      border-radius: 10px;
+      transition: 0.3s ease;
+      background-color: #2678ec;
+      box-shadow: 0 4px 6px rgb(5, 0, 225);
+      border: 1px solid white;
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .btn-pointage:hover {
+      background-color: #1e63c7;
+      transform: scale(1.05);
+    }
+    .btn-pointage:disabled {
+      background-color: gray;
+      cursor: not-allowed;
+    }
+    .close-icon {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      color: #333;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    @media (max-width: 400px) {
+      .btn-pointage {
+        right: 20px;
+        font-size: 20px;
+        padding: 12px 24px;
+      }
+    }
+  </style>
+</head>
+<div class="container">
+    <i class="fas fa-times close-icon"></i>
+    <div class="header">
+      <img src="calendar.png" alt="Calendrier" class="calendar-icon">
+      JOUR POINTAGE
+    </div>
+    <div class="days" id="days">
+      <div class="day" data-date="04-14">04-14<br><img src="1744822501359.jpg" alt="Image jour"></div>
+      <div class="day" data-date="04-15">04-15<br><img src="coin.png" alt="Pièce"></div>
+      <div class="day" data-date="04-16">04-16<br><img src="coin.png" alt="Pièce"></div>
+      <div class="day" data-date="04-17">04-17<br><img src="coin.png" alt="Pièce"></div>
+      <div class="day" data-date="04-18">04-18<br><img src="coin.png" alt="Pièce"></div>
+      <div class="day" data-date="04-19">04-19<br><img src="coin.png" alt="Pièce"></div>
+      <div class="day special" data-date="04-20">04-20<br><img src="treasure.png" alt="Trésor"></div>
+    </div>
+    <button class="btn-pointage">POINTAGE</button>
+  </div>  
+  <script>
+    const today = new Date();
+    const mois = String(today.getMonth() + 1).padStart(2, '0');
+    const jour = String(today.getDate()).padStart(2, '0');
+    const dateDuJour = `${mois}-${jour}`;
+    const jours = document.querySelectorAll('.day');
+    let jourAcocher = null;
+    jours.forEach(j => {
+      if (j.dataset.date === dateDuJour) {
+        jourAcocher = j;
+        j.style.backgroundColor = "#9affc1"; // Couleur spéciale pour aujourd’hui
+        j.style.border = "2px solid green";
+      }
+    });
+    const bouton = document.querySelector(".btn-pointage");
+    bouton.addEventListener("click", function () {
+      if (jourAcocher) {
+        jourAcocher.innerHTML += "<br><i class='fas fa-check' style='color:green;'></i>";
+        bouton.disabled = true;
+        bouton.textContent = "Pointé !";
+        alert("Pointage du " + dateDuJour + " enregistré !");
+      } else {
+        alert("Aucun jour à pointer aujourd’hui !");
+      }
+    });
+    document.querySelector(".close-icon").addEventListener("click", function() {
+      document.querySelector(".container").style.display = "none";
+    });
+  </script>
+</html>

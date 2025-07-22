@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Historique des Revenus Reçus</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #0b0f1a;
+      color: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #00bcd4;
+      margin-bottom: 30px;
+    }
+    .tabs {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      background: #1c2331;
+      border: 1px solid #2c3e50;
+      color: #ccc;
+      border-radius: 6px 6px 0 0;
+      margin: 0 5px;
+    }
+    .tab.active {
+      background: #00bcd4;
+      color: #fff;
+      font-weight: bold;
+    }
+    .section {
+      display: none;
+    }
+    .section.active {
+      display: block;
+    }
+    .revenu {
+      background: #1c2331;
+      padding: 15px;
+      margin: 10px 0;
+      border-left: 5px solid #00bcd4;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+    .left {
+      display: flex;
+      align-items: center;
+    }
+    .left i {
+      font-size: 24px;
+      margin-right: 10px;
+      color: #00bcd4;
+    }
+    .info {
+      display: flex;
+      flex-direction: column;
+    }
+    .info strong {
+      font-size: 16px;
+      color: #fff;
+    }
+    .info span {
+      font-size: 12px;
+      color: #aaa;
+    }
+    .right {
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .reset-btn {
+      display: block;
+      margin: 0 auto 20px;
+      background: #f44336;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .reset-btn:hover {
+      background: #d32f2f;
+    }
+    .placeholder {
+      text-align: center;
+      font-style: italic;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <h2>Historique des Revenus Reçus</h2>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('revenus')">Détails des revenus</div>
+    <div class="tab" onclick="switchTab('portefeuille')">Détails du portefeuille</div>
+    <div class="tab" onclick="switchTab('historique')">Historique Recharges</div>
+  </div>
+
+  <div id="revenus" class="section active">
+    <button class="reset-btn" onclick="resetHistorique()">Réinitialiser l'historique</button>
+    <div id="revenus-container"></div>
+  </div>
+
+  <div id="portefeuille" class="section">
+    <div id="gains-pointage"></div>
+  </div>
+
+  <div id="historique" class="section">
+    <div id="recharges-container"></div>
+  </div>
+
+  <script>
+    const tabs = document.querySelectorAll(".tab");
+    const sections = document.querySelectorAll(".section");
+    let produits = JSON.parse(localStorage.getItem("achats")) || [];
+
+    function switchTab(id) {
+      tabs.forEach(tab => tab.classList.remove("active"));
+      sections.forEach(section => section.classList.remove("active"));
+      document.querySelector(`.tab[onclick*="${id}"]`).classList.add("active");
+      document.getElementById(id).classList.add("active");
+
+      if (id === "portefeuille") {
+        afficherGainsPointage();
+      } else if (id === "revenus") {
+        afficherHistorique();
+      } else if (id === "historique") {
+        afficherRecharges();
+      }
+    }
+
+    function afficherHistorique() {
+      const historiqueContainer = document.getElementById("revenus-container");
+      historiqueContainer.innerHTML = "";
+      const revenus = [];
+
+      produits.forEach(p => {
+        if (p.history) {
+          p.history.forEach(item => {
+            revenus.push({
+              type: 'revenu',
+              montant: item.montant,
+              date: item.date,
+              time: item.time,
+              nom: p.nom || "Commande"
+            });
+          });
+        }
+      });
+
+      const retraits = JSON.parse(localStorage.getItem("historiqueRetraits")) || [];
+      retraits.forEach(r => {
+        revenus.push({
+          type: 'retrait',
+          montant: r.montant,
+          date: r.date,
+          time: r.time || "",
+          nom: "Retrait"
+        });
+      });
+
+      revenus.sort((a, b) => new Date(b.date + " " + b.time) - new Date(a.date + " " + a.time));
+
+      if (revenus.length === 0) {
+        historiqueContainer.innerHTML = "<p class='placeholder'>Aucun revenu reçu pour l’instant.</p>";
+      } else {
+        revenus.forEach(r => {
+          const div = document.createElement("div");
+          div.className = "revenu";
+          const isRetrait = r.type === 'retrait';
+          const montantAffiche = isRetrait ? -r.montant : r.montant;
+          const couleurMontant = isRetrait ? "#f44336" : "#4caf50";
+          const icone = isRetrait ? "fa-arrow-circle-up" : "fa-wallet";
+          const titre = isRetrait ? "Retrait effectué" : `Revenu de ${r.nom}`;
+          div.innerHTML = `
+            <div class="left">
+              <i class="fas ${icone}"></i>
+              <div class="info">
+                <strong>${titre}</strong>
+                <span class="date">${r.date}</span>
+                ${r.time ? `<span class="time">${r.time}</span>` : ""}
+              </div>
+            </div>
+            <div class="right" style="color:${couleurMontant};">${montantAffiche} FCFA</div>
+          `;
+          historiqueContainer.appendChild(div);
+        });
+      }
+    }
+
+    function resetHistorique() {
+      if (confirm("Êtes-vous sûr de vouloir supprimer tout l'historique des revenus ?")) {
+        produits = produits.map(p => ({ ...p, history: [] }));
+        localStorage.setItem("achats", JSON.stringify(produits));
+        localStorage.removeItem("historiqueRetraits");
+        afficherHistorique();
+        alert("Historique réinitialisé avec succès.");
+      }
+    }
+
+    function afficherGainsPointage() {
+      const conteneur = document.getElementById("gains-pointage");
+      conteneur.innerHTML = "";
+      const gains = JSON.parse(localStorage.getItem("historiqueGains")) || [];
+
+      if (gains.length === 0) {
+        conteneur.innerHTML = "<p class='placeholder'>Aucun détail de portefeuille pour l’instant.</p>";
+        return;
+      }
+
+      gains.reverse().forEach(item => {
+        const div = document.createElement("div");
+        div.className = "revenu";
+        div.innerHTML = `
+          <div class="left">
+            <i class="fas fa-check-circle"></i>
+            <div class="info">
+              <strong>Gain de pointage</strong>
+              <span class="date">${item.date}</span>
+            </div>
+          </div>
+          <div class="right" style="color:#4caf50;">+${item.montant} FCFA</div>
+        `;
+        conteneur.appendChild(div);
+      });
+    }
+
+    function afficherRecharges() {
+      const conteneur = document.getElementById("recharges-container");
+      conteneur.innerHTML = "";
+      const depots = JSON.parse(localStorage.getItem("depots")) || [];
+
+      if (depots.length === 0) {
+        conteneur.innerHTML = "<p class='placeholder'>Aucun dépôt enregistré pour l’instant.</p>";
+        return;
+      }
+
+      depots.reverse().forEach(depot => {
+        const statutStyle = depot.statut === "Validé" ? "color:#4caf50;" :
+                            depot.statut === "Annulé" ? "color:red;" : "color:orange;";
+        const div = document.createElement("div");
+        div.className = "revenu";
+        div.innerHTML = `
+          <div class="left">
+            <i class="fas fa-bolt"></i>
+            <div class="info">
+              <strong>Dépôt de ${depot.montant} FCFA</strong>
+              <span>Méthode: ${depot.methodePaiement || "Inconnue"}</span>
+              <span>Réf: ${depot.numeroPaiement || "Non spécifié"}</span>
+            </div>
+          </div>
+          <div class="right" style="${statutStyle}">${depot.statut}</div>
+        `;
+        conteneur.appendChild(div);
+      });
+    }
+
+    // Chargement initial
+    afficherHistorique();
+  </script>
+</body>
+</html>

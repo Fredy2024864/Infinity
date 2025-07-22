@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mes InfinityBox Louées</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial;
+      padding: 20px;
+      background: #0b0f1a;
+    }
+    h2 {
+      text-align: center;
+    }
+    .produit {
+      display: flex;
+      justify-content: space-between;
+      background: #01182e;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      align-items: center;
+    }
+    .info {
+      flex-grow: 1;
+      color: #ccc;
+    }
+    .btn-recevoir {
+      background: #4CAF50;
+      color: white;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn-recevoir[disabled] {
+      background: #ada9a9;
+      cursor: not-allowed;
+    }
+    .top-right {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      text-decoration: none;
+      font-size: 22px;
+      color: #4CAF50;
+    }
+    .reset-btn {
+      display: block;
+      margin: 30px auto 10px;
+      background: #f44336;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .reset-btn:hover {
+      background: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+  <a href="historique.html" class="top-right" title="Voir l'historique">
+    <i class="fas fa-arrow-circle-right"></i>
+  </a>
+  <h2>Mes InfinityBox Louées</h2>
+  <div id="produitsLoues"></div>
+  <button class="reset-btn" onclick="resetAchats()">Réinitialiser les achats</button>
+  <script>
+    const container = document.getElementById("produitsLoues");
+    let produits = JSON.parse(localStorage.getItem("achats")) || [];
+    const today = new Date().toDateString();
+    // Affichage des produits loués
+    if (produits.length === 0) {
+      container.innerHTML = "<p style='text-align:center'>Aucun produit loué pour le moment.</p>";
+    } else {
+      produits.forEach((produit, index) => {
+        produit.earned = produit.earned || 0;
+        produit.lastCollected = produit.lastCollected || null;
+        produit.history = produit.history || [];
+        produit.startDate = produit.startDate || new Date().toISOString();
+        const start = new Date(produit.startDate);
+        const now = new Date();
+        const daysPassed = Math.floor((now - start) / (1000 * 60 * 60 * 24));
+        const daysLeft = Math.max(produit.duration - daysPassed, 0);
+        const div = document.createElement("div");
+        div.className = "produit";
+        const isCollectedToday = produit.lastCollected === today;
+        const disabledAttr = isCollectedToday || daysLeft === 0 ? "disabled" : "";
+        div.innerHTML = `
+          <div class="info">
+            <h3>${produit.name}</h3>
+            <p>Prix : ${produit.price} F</p>
+            <p>Durée : ${produit.duration} jours</p>
+            <p>Jours restants : <strong>${daysLeft}</strong></p>
+            <p>Revenus cumulés : <span id="earned-${index}">${produit.earned} F</span></p>
+          </div>
+          <button class="btn-recevoir" id="btn-${index}" onclick="collect(${index})" ${disabledAttr}>
+            ${daysLeft === 0 ? "Expiré" : (isCollectedToday ? "Déjà reçu" : "Recevoir")}
+          </button>
+        `;
+        container.appendChild(div);
+      });
+    }
+    // Fonction pour collecter les revenus
+    function collect(index) {
+      const now = new Date();
+      const produit = produits[index];
+      const dateStr = now.toLocaleDateString();
+      const timeStr = now.toLocaleTimeString();
+      // Vérifier si déjà collecté aujourd'hui
+      if (produit.lastCollected === now.toDateString()) return;
+      const montant = produit.income; // Assurez-vous que 'income' est défini dans l'objet produit
+      produit.earned += montant;
+      produit.lastCollected = now.toDateString();
+      produit.history.push({ montant: montant, date: dateStr, time: timeStr });
+      // Mise à jour du portefeuille des revenus
+      const portefeuilleRevenus = parseFloat(localStorage.getItem('portefeuilleRevenus') || '0');
+      const nouveauMontant = portefeuilleRevenus + montant;
+      localStorage.setItem('portefeuilleRevenus', nouveauMontant.toFixed(2));
+      // Mise à jour de l'affichage
+      document.getElementById("earned-" + index).textContent = produit.earned + " F";
+      const btn = document.getElementById("btn-" + index);
+      btn.disabled = true;
+      btn.textContent = "Déjà reçu";
+      alert(`Vous avez reçu ${montant} F aujourd'hui !`);
+      
+      // Sauvegarder les modifications dans le localStorage
+      localStorage.setItem("achats", JSON.stringify(produits));
+    }
+    // Fonction pour réinitialiser les achats
+    function resetAchats() {
+      if (confirm("Êtes-vous sûr de vouloir supprimer tous les produits loués et réinitialiser leur historique ?")) {
+        localStorage.removeItem("achats");
+        location.reload();
+      }
+    }
+  </script>
+</body>
+</html>

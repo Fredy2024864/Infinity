@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Changer de mot de passe - InfinityVest</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #020b27, #001133);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      background: #0e1a33;
+      border: 1px solid #2a3f5f;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      width: 100%;
+      max-width: 400px;
+      margin-top: 30px;
+    }
+    h2 {
+      color: #00d4ff;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #ccc;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #2a3f5f;
+      border-radius: 8px;
+      background: #112866;
+      color: white;
+      font-size: 16px;
+      margin-top: 5px;
+    }
+    input:focus, select:focus {
+      outline: none;
+      background: #163577;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 25px;
+      background: linear-gradient(to right, #00aaff, #0077ff);
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    .error {
+      color: red;
+      font-size: 13px;
+      margin-top: 5px;
+    }
+
+    .profile-icon {
+            position: fixed;
+            bottom: 180px;
+            right: 0;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-top: 50px;
+        }
+        img{
+            width: 50px;
+            height: 50px;
+            border-radius: 100px
+        }
+        .modal {
+            display: none; /* Masquer par défaut */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex; /* Afficher la modale */
+        }
+
+        .modal .container {
+            background: #112866;
+           padding: 10px 20px;
+           border-radius: 10px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 212px;
+            right: 472px;
+            border: none;
+            border-radius: 5px;
+            width: 30px;
+            height: 30px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .contact a {
+            color: #e9f0f1;
+            text-decoration: none;
+        }
+        .contact a:hover {
+            text-decoration: underline;
+        }
+
+
+  </style>
+</head>
+
+<body>
+
+  <h2>Changer de mot de passe</h2>
+
+  <div class="container">
+    <div class="form-group">
+      <label>Numéro de téléphone</label>
+      <div style="display: flex; gap: 5px;">
+        <select id="phoneCode">
+          <option value="+225">+225</option>
+        </select>
+        <input type="text" id="phoneNumber" placeholder="Numéro de téléphone">
+      </div>
+      <div id="phoneError" class="error"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Ancien mot de passe</label>
+      <input type="password" id="oldPassword" placeholder="Ancien mot de passe">
+      <div id="oldPasswordError" class="error"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Nouveau mot de passe</label>
+      <input type="password" id="newPassword" placeholder="Nouveau mot de passe">
+      <div id="newPasswordError" class="error"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Confirmer nouveau mot de passe</label>
+      <input type="password" id="confirmPassword" placeholder="Confirmer mot de passe">
+      <div id="confirmPasswordError" class="error"></div>
+    </div>
+
+    <div class="profile-icon" onclick="window.location.href='contactservice.html'"></div>
+<i class="profile-icon" onclick="openModal()"><span><img src="img/service client.jpg" alt=""></span></i>
+
+    <div id="serviceModal" class="modal">
+        <div class="container">
+            <button class="close-btn" onclick="closeModal()">×</button>
+            <h2>Contactez notre Service Client</h2>
+            <p class="contact">📞 Ligne 1 : <a href="https://wa.me/2250502056302" target="_blank">https://wa.me/2250502056302</a></p>
+            <p class="contact">📞 Ligne 2 : <a href="https://wa.me/2250719455161" target="_blank">https://wa.me/2250719455161</a></p>
+            <p class="contact">📞 Ligne 3 : <a href="https://wa.me/2250799343386" target="_blank">https://wa.me/2250799343386</a></p>
+        </div>
+    </div>
+
+    <button onclick="confirmChange()">Changer le mot de passe</button>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+  <script>
+    function confirmChange() {
+      resetErrors();
+      
+      var phoneNumber = document.getElementById("phoneNumber").value.trim();
+      var oldPassword = document.getElementById("oldPassword").value.trim();
+      var newPassword = document.getElementById("newPassword").value.trim();
+      var confirmPassword = document.getElementById("confirmPassword").value.trim();
+      var phoneCode = document.getElementById("phoneCode").value.trim();
+      var fullPhone = (phoneCode + phoneNumber).replace(/\s+/g, '');
+
+      var valid = true;
+
+      if (phoneNumber === "") {
+        document.getElementById("phoneError").textContent = "Veuillez entrer votre numéro de téléphone.";
+        valid = false;
+      }
+      if (oldPassword === "") {
+        document.getElementById("oldPasswordError").textContent = "Veuillez entrer votre ancien mot de passe.";
+        valid = false;
+      }
+      if (newPassword === "") {
+        document.getElementById("newPasswordError").textContent = "Veuillez entrer un nouveau mot de passe.";
+        valid = false;
+      }
+      if (confirmPassword === "") {
+        document.getElementById("confirmPasswordError").textContent = "Veuillez confirmer votre nouveau mot de passe.";
+        valid = false;
+      }
+      if (newPassword !== confirmPassword) {
+        document.getElementById("confirmPasswordError").textContent = "Les mots de passe ne correspondent pas.";
+        valid = false;
+      }
+
+      if (!valid) return;
+
+      var savedUsers = JSON.parse(localStorage.getItem("users") || "[]");
+      var user = savedUsers.find(u => u.phone === fullPhone);
+
+      if (!user) {
+        document.getElementById("phoneError").textContent = "Numéro de téléphone introuvable.";
+        return;
+      }
+
+      if (user.password !== hashPassword(oldPassword)) {
+        document.getElementById("oldPasswordError").textContent = "Ancien mot de passe incorrect.";
+        return;
+      }
+
+      // Modifier le mot de passe
+      user.password = hashPassword(newPassword);
+      localStorage.setItem("users", JSON.stringify(savedUsers));
+
+      alert("Mot de passe changé avec succès !");
+      window.location.href = "connexion.html"; // Redirige vers la connexion
+    }
+
+    function resetErrors() {
+      document.getElementById("phoneError").textContent = "";
+      document.getElementById("oldPasswordError").textContent = "";
+      document.getElementById("newPasswordError").textContent = "";
+      document.getElementById("confirmPasswordError").textContent = "";
+    }
+
+    function hashPassword(password) {
+      return CryptoJS.SHA256(password).toString(CryptoJS.enc.Base64);
+    }
+  </script>
+
+    
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    
+        function openModal() {
+            document.getElementById('serviceModal').classList.add('active');
+        }
+    
+        function closeModal() {
+            document.getElementById('serviceModal').classList.remove('active');
+        }
+    </script>
+
+</body>
+</html>

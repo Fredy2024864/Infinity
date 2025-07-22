@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Articles - Produits</title>
+    <link rel="stylesheet" href="parametre.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+<style>
+      .profile-icon {
+            position: fixed;
+            bottom: 180px;
+            right: 0;
+          
+            border-radius: 50%;
+            width: 50px; 
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-top: 50px;
+        }
+
+       
+
+       /* Styles pour la boîte modale */
+       .modal {
+            display: none; /* Masquer par défaut */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex; /* Afficher la modale */
+        }
+
+        .modal .container {
+           background: #112866;
+           padding: 10px 20px;
+           border-radius: 10px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 220px;
+            right: 485px;
+            border: none;
+            border-radius: 5px;
+            width: 30px;
+            height: 30px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            background: #e04e4e;
+        }
+
+        span img{
+            width: 50px;
+            height: 50px;
+            border-radius: 100%;
+        }
+        .contact a{
+            color: #fff;
+        }
+        
+</style>
+    <header>
+        <h1>ARTICLES</h1>
+      <div class="dropdown">
+        <button class="dropdown-button">Sélectionner une option</button>
+        <div class="dropdown-content">
+            <label><input type="checkbox" value="Web page data processing" id="webPageDataProcessing"> Web page data processing</label>
+            <label><input type="checkbox" value="Produit de quantity"> Produit de quantity</label>
+        </div>
+    </div>
+
+    </header>
+
+    <nav class="tabs" id="productTabs" style="display: none;">
+        <button >Produit L'appareil</button>
+        <button class="active">Produit Fonds</button>
+    </nav>
+
+    <section class="products">
+        <div class="product">
+                <img src="web-5.jpg" alt="Product-1">
+                <div class="product-info">
+                    <h2>Product-1</h2>
+                    <p>Prix: <span class="price">3,000.00 FCFA</span></p>
+                    <p>Période Validité: <span class="days">52 Jour</span></p>
+                    <p>Total Gains: <span class="gains">6,240.00 FCFA</span></p>
+                </div>
+        </div>
+
+        <div class="product">
+            
+                <img src="web-15.jpg" alt="Product-2">
+                <div class="product-info">
+                    <h2>Product-2</h2>
+                    <p>Prix: <span class="price">5,000.00 FCFA</span></p>
+                    <p>Période Validité: <span class="days">55 Jour</span></p>
+                    <p>Total Gains: <span class="gains">8,250.00 FCFA</span></p>
+                </div>
+        </div>
+
+        <div class="product">
+            
+               <img src="web-45.jpg" alt="Product-3">
+               <div class="product-info">
+                    <h2>Product-3</h2>
+                    <p>Prix: <span class="price">7,000.00 FCFA</span></p>
+                    <p>Période Validité: <span class="days">42 Jour</span></p>
+                    <p>Total Gains: <span class="gains">10,080.00 FCFA</span></p>
+                </div>
+        </div>
+
+        <div class="product">
+            <a href="prot 4.html">
+                <img src="web-90.jpg" alt="Product-4">
+                <div class="product-info">
+                    <h2>Product-4</h2>
+                    <p>Prix: <span class="price">12,500.00 FCFA</span></p>
+                    <p>Période Validité: <span class="days">44 Jour</span></p>
+                    <p>Total Gains: <span class="gains">?</span></p>
+                </div>
+            </a>
+        </div>
+    </section>
+    <footer>
+        <div class="footer-menu">
+            <button ><a href="reussi.html"><i class="fa fa-home"></i></a></button>
+            <button><a href="parametre.html"><i class="fa-solid fa-bars"></i></a></button>
+            <button><a href="info.html"><i class="fa-solid fa-circle-info"></i></a></button>
+            <button><a href="user.html" onclick="redirectToLogin()"><i class="fa fa-user"></i></a></button>
+        </div>
+       
+    </footer>
+    <script>
+        document.getElementById('webPageDataProcessing').addEventListener('change', function() {
+            var productTabs = document.getElementById('productTabs');
+            if (this.checked) {
+                productTabs.style.display = 'block';
+            } else {
+                productTabs.style.display = 'none';
+            }
+        });
+
+        document.querySelector('input[value="Produit de quantity"]').addEventListener('change', function() {
+            var productTabs = document.getElementById('productTabs');
+            if (!this.checked) {
+                productTabs.style.display = 'none';
+            }
+        });
+
+        function markAsPurchased() {
+            // Enregistrer qu'un produit a été acheté
+            localStorage.setItem('hasPurchased', 'true');
+            alert('Achat enregistré avec succès !');
+        }
+
+        // Ajout de la gestion des onglets "Produit L'appareil" et "Produit Fonds"
+        const tabs = document.querySelectorAll('#productTabs button');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(btn => btn.classList.remove('active'));
+                tab.classList.add('active');
+                if(tab.textContent.trim() === "Produit Fonds"){
+                    window.location.href = "vide.html";
+                }
+            });
+        });
+    </script>
+    <button onclick="markAsPurchased()">Enregistrer un achat</button>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

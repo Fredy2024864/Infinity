@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CODE D'ÉCHANGE</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #00008d;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: #1A1F50;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+      text-align: center;
+      width: 300px;
+    }
+    input {
+      width: 80%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+      text-align: center;
+    }
+    button {
+      padding: 10px 20px;
+      background: #4CAF50;
+      border: none;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    .message {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>CODE D'ÉCHANGE</h2>
+    <input type="text" id="codeInput" placeholder="Entrez le code d'échange">
+    <button onclick="validerCode()">Confirmer</button>
+    <p class="message" id="message"></p>
+  </div>
+
+  <script>
+    function validerCode() {
+      const input = document.getElementById('codeInput').value.trim().toUpperCase();
+      const message = document.getElementById('message');
+      const allCodes = JSON.parse(localStorage.getItem('exchangeCodes')) || {};
+      const codeData = allCodes[input];
+
+      if (!codeData) {
+        message.textContent = "Code invalide.";
+        message.style.color = "red";
+        return;
+      }
+
+      // Gestion des codes expirés
+      if (codeData.expiration && Date.now() > codeData.expiration) {
+        message.textContent = "Ce code a expiré.";
+        message.style.color = "orange";
+        return;
+      }
+
+      // Historique utilisateur
+      const userHistory = JSON.parse(localStorage.getItem('usedCodes') || '{}');
+      if (userHistory[input]) {
+        message.textContent = "Vous avez déjà utilisé ce code.";
+        message.style.color = "orange";
+        return;
+      }
+
+      // Calcul du montant
+      let montant = 0;
+      if (typeof codeData.montant === 'object') {
+        // Aléatoire
+        if (codeData.maxUses && codeData.used >= codeData.maxUses) {
+          message.textContent = "Ce code a atteint sa limite d'utilisation.";
+          message.style.color = "orange";
+          return;
+        }
+        montant = Math.floor(Math.random() * (codeData.montant.max - codeData.montant.min + 1)) + codeData.montant.min;
+        codeData.used = (codeData.used || 0) + 1;
+      } else {
+        // Fixe
+        montant = codeData.montant;
+      }
+
+      // Mise à jour du portefeuille
+      const wallet = parseFloat(localStorage.getItem('portefeuilleRevenus') || '0');
+      localStorage.setItem('portefeuilleRevenus', (wallet + montant).toFixed(2));
+
+      // Mise à jour de l'historique
+      const gains = JSON.parse(localStorage.getItem('historiqueGains') || '[]');
+      gains.push({ montant, code: input, date: new Date().toLocaleString() });
+      localStorage.setItem('historiqueGains', JSON.stringify(gains));
+
+      // Marquer ce code comme utilisé par l'utilisateur
+      userHistory[input] = true;
+      localStorage.setItem('usedCodes', JSON.stringify(userHistory));
+
+      // Enregistrer les modifications si aléatoire
+      if (typeof codeData.montant === 'object') {
+        allCodes[input] = codeData;
+        localStorage.setItem('exchangeCodes', JSON.stringify(allCodes));
+      }
+
+      // Message succès
+      message.textContent = `Vous avez gagné ${montant} FCFA !`;
+      message.style.color = "lightgreen";
+
+      // Redirection optionnelle
+      setTimeout(() => {
+        window.location.href = 'user.html';
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mon Équipe</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #0d1128;
+            color: #fff;
+        }
+        .container {
+            padding: 80px 20px 20px;
+            max-width: 500px;
+            margin: auto;
+            position: relative;
+            margin-top: 32px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            background: #0d1128;
+            padding: 15px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        .header h1 {
+            margin-left: 10px;
+            font-size: 22px;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px; /* Augmente l'espacement entre les éléments */
+            color: #fff;
+        }
+        .user-info img {
+            width: 40px; /* Réduire la taille de l'image */
+            height: auto;
+            margin-right: 10px;
+            border-radius: 35px;
+        }
+        .user-id {
+            font-weight: bold;
+            cursor: pointer; /* Indique que l'élément est cliquable */
+        }
+        .vip-badge {
+            background: orange;
+            padding: 3px 8px;
+            border-radius: 12px;
+        }
+        .card {
+            background: #1f2a48;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .card h2 {
+            margin: 0;
+            color: #00ffae;
+            font-size: 26px;
+        }
+        .card span {
+            display: block;
+            font-size: 14px;
+            color: #ccc;
+            margin-top: 5px;
+        }
+        .stats {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            flex: 1;
+            padding: 15px;
+            border-radius: 16px;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            color: white;
+            font-size: 14px;
+        }
+        .orange {
+            background: linear-gradient(to right, #ffaf40, #ff7300);
+        }
+        .tabs-wrapper {
+            position: relative;
+            margin-bottom: 80px;
+        }
+        .tabs {
+            display: flex;
+            justify-content: space-between;
+            background: #1c2541;
+            padding: 10px;
+            border-radius: 12px;
+        }
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .tab.active {
+            background: #00ffae;
+            color: #000;
+            font-weight: bold;
+        }
+        #status {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: #2e3859;
+            padding: 10px 15px;
+            border-radius: 12px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .badge {
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: bold;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background 0.3s, color 0.3s;
+        }
+        .green {
+            background: #00ffae;
+            color: #000;
+        }
+        .brown {
+            background: none;
+            color: #fff;
+        }
+        .account-item {
+            background: #1c2541;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            line-height: 1.5;
+            position: relative;
+        }
+        .account-item strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #ccc;
+        }
+        .account-date {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 12px;
+            color: #aaa;
+        }
+        .profile-icon {
+            position: fixed;
+            bottom: 180px;
+            right: 0;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-top: 50px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal .container {
+            background: #112866;
+            padding: 5px 20px;
+            border-radius: 10px;
+            margin-top: 210px;
+        }
+        .close-btn {
+            position: absolute;
+            top: 2px;
+            right: -5px;
+            border: none;
+            border-radius: 5px;
+            width: 30px;
+            height: 30px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+        }
+        span img {
+            width: 50px;
+            height: 50px;
+            border-radius: 100%;
+        }
+        .contact a {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button onclick="history.back()" style="background:none; border:none; color:white; font-size:20px;">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <h1>MON ÉQUIPE</h1>
+    </div>
+    <div class="container">
+        <div class="card">
+            <h2 id="total-gains">0.00 FCFA</h2>
+            <span>Total Gains</span>
+            <span id="team-size">Taille de l'équipe : 0.00</span>
+        </div>
+        <div class="stats">
+            <div class="stat-box" id="gain-today">
+                0.00 FCFA<br><small>Aujourd’hui</small>
+            </div>
+            <div class="stat-box orange" id="new-members">
+                0.00<br><small>Nouveaux membres</small>
+            </div>
+        </div>
+        <div class="tabs-wrapper">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab(this, 'B')">B-Niveau</div>
+                <div class="tab" onclick="switchTab(this, 'C')">C-Niveau</div>
+                <div class="tab" onclick="switchTab(this, 'D')">D-Niveau</div>
+            </div>
+            <div id="status">
+                <span class="badge green" id="efficace" onclick="selectStatus('efficace')">Efficace</span>
+                <span class="badge brown" id="invalide" onclick="selectStatus('invalide')">Invalide</span>
+            </div>
+        </div>
+        <div class="level-list" id="account-list"></div>
+    </div>
+    <div class="profile-icon" onclick="openModal()">
+        <span><img src="img/service client.jpg" alt=""></span>
+    </div>
+    <div id="serviceModal" class="modal">
+        <div class="container">
+            <div class="close-btn" onclick="closeModal()">×</div>
+            <h2>Contactez notre Service Client</h2>
+            <p class="contact">📞 Ligne 1 : <a href="https://wa.me/2250502056302" target="_blank">+225 0502056302</a></p>
+            <p class="contact">📞 Ligne 2 : <a href="https://wa.me/2250719455161" target="_blank">+225 0719455161</a></p>
+            <p class="contact">📞 Ligne 3 : <a href="https://wa.me/2250799343386" target="_blank">+225 0799343386</a></p>
+        </div>
+    </div>
+    <script>
+        const accounts = {
+            B: { efficace: [], invalide: [] },
+            C: { efficace: [], invalide: [] },
+            D: { efficace: [], invalide: [] }
+        };
+        let currentLevel = 'B';
+        let currentStatus = 'efficace';
+        function switchTab(tabEl, level) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            tabEl.classList.add('active');
+            currentLevel = level;
+            displayAccounts();
+        }
+        function selectStatus(type) {
+            const efficace = document.getElementById('efficace');
+            const invalide = document.getElementById('invalide');
+            if (type === 'efficace') {
+                efficace.classList.add('green');
+                efficace.classList.remove('brown');
+                invalide.classList.add('brown');
+                invalide.classList.remove('green');
+            } else {
+                invalide.classList.add('green');
+                invalide.classList.remove('brown');
+                efficace.classList.add('brown');
+                efficace.classList.remove('green');
+            }
+            currentStatus = type;
+            displayAccounts();
+        }
+        function displayAccounts() {
+            const listEl = document.getElementById('account-list');
+            listEl.innerHTML = '';
+            const data = accounts[currentLevel][currentStatus] || [];
+            data.forEach(num => {
+                const masked = num.slice(0, 3) + '*' + num.slice(6);
+                const div = document.createElement('div');
+                div.className = 'account-item';
+                div.innerHTML = `
+                    <strong>Numéro de compte</strong>${masked}
+                    <div class="account-date">${new Date().toLocaleDateString('fr-FR')}</div>
+                `;
+                listEl.appendChild(div);
+            });
+        }
+        function openModal() {
+            document.getElementById('serviceModal').classList.add('active');
+        }
+        function closeModal() {
+            document.getElementById('serviceModal').classList.remove('active');
+        }
+        window.onload = () => {
+            switchTab(document.querySelector('.tab.active'), 'B');
+        };
+        // Fonction pour calculer le niveau VIP
+        function calculerNiveauVIP(utilisateur) {
+            let vip = 0;
+            // VIP 1 : Acheté un produit
+            if (utilisateur.achats && utilisateur.achats.length > 0) {
+                vip = 1;
+            } else {
+                return vip;
+            }
+            // VIP 2 : A invité 3 personnes qui sont au VIP1
+            const vip1Count = utilisateur.invites.filter(inv => inv.vip === 1).length;
+            if (vip1Count >= 3) {
+                vip = 2;
+            } else {
+                return vip;
+            }
+            // VIP 3 : A 3 subordonnés au VIP2
+            const vip2Count = utilisateur.invites.filter(inv => inv.vip === 2).length;
+            if (vip2Count >= 3) {
+                vip = 3;
+            } else {
+                return vip;
+            }
+            // VIP 4 : A 4 VIP3 et 100 personnes dans l’équipe
+            const vip3Count = utilisateur.invites.filter(inv => inv.vip === 3).length;
+            if (vip3Count >= 4 && utilisateur.totalEquipe >= 100) {
+                vip = 4;
+            } else {
+                return vip;
+            }
+            // VIP 5 : A 4 VIP4 et 300 dans l’équipe
+            const vip4Count = utilisateur.invites.filter(inv => inv.vip === 4).length;
+            if (vip4Count >= 4 && utilisateur.totalEquipe >= 300) {
+                vip = 5;
+            } else {
+                return vip;
+            }
+            // VIP 6 : A 4 VIP5 et 500 dans l’équipe
+            const vip5Count = utilisateur.invites.filter(inv => inv.vip === 5).length;
+            if (vip5Count >= 4 && utilisateur.totalEquipe >= 500) {
+                vip = 6;
+            } else {
+                return vip;
+            }
+            // VIP 7 : A 3 VIP6 et 800 dans l’équipe
+            const vip6Count = utilisateur.invites.filter(inv => inv.vip === 6).length;
+            if (vip6Count >= 3 && utilisateur.totalEquipe >= 800) {
+                vip = 7;
+            }
+            return vip;
+        }
+        // Fonction pour initialiser ou charger les données de l'utilisateur
+        function initialiserUtilisateur() {
+            const utilisateur = {
+                achats: JSON.parse(localStorage.getItem("achatsUtilisateur")) || [],
+                invites: JSON.parse(localStorage.getItem("invitesUtilisateur")) || [],
+                totalEquipe: parseInt(localStorage.getItem("tailleEquipe")) || 0
+            };
+            // Recalculer le niveau VIP
+            const vipLevel = calculerNiveauVIP(utilisateur);
+            // Enregistrer le niveau VIP dans le localStorage
+            localStorage.setItem("vipLevel", vipLevel);
+            // Mettre à jour l'affichage du badge VIP
+            mettreAJourBadgeVIP(vipLevel);
+        }
+        // Fonction pour mettre à jour le badge VIP sur la page
+        function mettreAJourBadgeVIP(vipLevel) {
+            const badge = document.querySelector(".vip-badge");
+            if (badge) {
+                badge.textContent = "VIP" + vipLevel; // Mettre à jour le badge avec le niveau
+            }
+        }
+        // Appeler la fonction lors du chargement de la page pour initialiser l'utilisateur
+        window.onload = function() {
+            initialiserUtilisateur();  // Charger les données et initialiser le niveau VIP au démarrage
+        };
+    </script>
+</body>
+</html>

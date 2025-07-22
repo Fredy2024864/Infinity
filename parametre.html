@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>ARTICLES</title>
+  <link rel="stylesheet" href="parametre.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb2vVcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background-color: rgb(11, 13, 46);
+      z-index: 500;
+    }
+
+    body {
+      margin-top: 135px; /* Ajustez selon la hauteur du header */
+    }
+
+    .dropdown {
+      background-color: #1E2A70;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      margin: 10px 0;
+    }
+
+    .tabs button {
+      background-color: transparent;
+      border: none;
+      color: gray;
+      font-size: 16px;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .tabs .active {
+      color: cyan;
+      border-bottom: 2px solid cyan;
+    }
+
+    .products {
+      margin: 20px;
+    }
+
+    .product {
+      display: flex;
+      background-color: #1E2A70;
+      margin: 10px auto;
+      width: 90%;
+      padding: 15px;
+      border-radius: 10px;
+      align-items: center;
+    }
+
+    .product img {
+      width: 80px;
+      height: 80px;
+      border-radius: 10px;
+    }
+
+    .product-info {
+      margin-left: 15px;
+      text-align: left;
+    }
+
+    .product-info h2 {
+      margin: 0;
+    }
+
+    .price {
+      color: lightgreen;
+      font-weight: bold;
+    }
+
+    .days {
+      color: cyan;
+    }
+
+    .gains {
+      color: orange;
+    }
+
+    .dropdown {
+      align-items: center;
+      display: flex;
+    }
+
+    .dropdown-button {
+      background-color: #3498db;
+      color: white;
+      padding: 10px;
+      border: none;
+      cursor: pointer;
+      left: 800px;
+      top: 100%;
+      transition: 0.3s ease;
+    }
+
+   
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+
+  .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+
+  .dropdown-content a:hover {background-color: #f1f1f1}
+
+  .dropdown-button:hover + .dropdown-content {
+    display: block;
+  }
+
+  .dropdown-content:hover {
+    display: block;
+  }
+
+    .profile-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .action-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 20px;
+      font-size: 16px;
+      cursor: pointer;
+      color: white;
+    }
+
+    button:first-child {
+      background: #3498db;
+    }
+
+    button:last-child {
+      background: #00c853;
+    }
+
+    /* Menu supplémentaire */
+    .extra-menu {
+      margin-top: 20px;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .menu-grid div {
+      padding: 10px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+    }
+
+    .settings a {
+      display: block;
+      padding: 10px 0;
+      border-bottom: 1px solid #4e4eaf;
+      color: white;
+      text-decoration: none;
+    }
+
+    .settings a:last-child {
+      border-bottom: none;
+    }
+
+    /* Menu fixe en bas */
+    .footer-menu {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(10, 15, 41, 0.95);
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      border-top: 1px solid rgba(10, 15, 41, 0.95);
+      border-radius: 25px;
+    }
+
+    .footer-menu button a {
+      text-decoration: none;
+      color: #333;
+      font-size: 24px;
+    }
+
+    .deposit {
+      margin: 20px auto;
+      padding: 10px;
+      background-color: #e0f7fa;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      max-width: 600px;
+    }
+
+    .deposit p {
+      font-size: 16px;
+      color: #333;
+      text-align: center;
+    }
+
+    .profile-icon {
+      position: fixed;
+      bottom: 180px;
+      right: 0;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-top: 50px;
+    }
+
+    .Bases {
+    background-color: #1E2A70;
+    color: white;
+    border: 1px solid cadetblue;
+    padding: 10px 15px;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-left: 38px;
+    transition: 0.2s ease;
+}
+
+    .Bases:hover {
+      background-color: #0c0e1b;
+      color: white;
+      border: 1px solid cadetblue;
+    }
+
+    .Bases:active {
+      background-color: #0c0e1b;
+      color: white;
+      border: 1px solid cadetblue;
+    }
+
+    .Bases:focus {
+      background-color: #0c0e1b;
+      color: white;
+      border: 1px solid cadetblue;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>ARTICLES</h1>
+    <div class="dropdown">
+ <!-- Ajouter un conteneur pour les éléments du dropdown -->
+<button class="dropdown-button" onclick="toggleDropdown()">Produits ▼</button>
+<div class="dropdown-content" id="dropdown-content">
+  <!-- Ajouter les éléments du dropdown ici -->
+  <a href="#">Produit 1</a>
+  <a href="#">Produit 2</a>
+  <a href="#">Produit 3</a>
+</div>
+      <div class="Bases" onclick="redirectToProduitsBases()">Produits Bases</div>
+      <div class="Bases" onclick="defilerVers()">InfinityBox</div>
+    </div>
+  </header>
+
+  <script>
+    function toggleDropdown() {
+      var dropdownContent = document.getElementById("dropdown-content");
+      if (dropdownContent.style.display === "block") {
+        dropdownContent.style.display = "none";
+      } else {
+        dropdownContent.style.display = "block";
+      }
+    }
+  </script>
+
+  <script>
+   function redirectToProduitsBases() {
+    window.location.href = "produitsBases.html";
+  }
+
+   function defilerVers() {
+    window.location.href = "infinitybox.html";
+    
+   }
+
+   </script>
+ 
+</body>
+</html>

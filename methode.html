@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"> <!-- Font Awesome -->
+  <title>Recharge</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #0a0f1a;
+      margin: 0;
+      padding: 0;
+      color: white;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .back-button {
+      width: 30px;
+      height: 30px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    .back-button::before {
+     
+      color: white;
+      font-size: 18px;
+    }
+    .back-button:hover {
+      color: #00ff00;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .input-box {
+      width: 100%;
+      padding: 10px;
+      font-size: 18px;
+      border: 2px solid #007bff;
+      background: transparent;
+      color: white;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .input-box:focus {
+      outline: none;
+      border-color: #00ff00;
+    }
+
+    .amount-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .amount-button {
+      width: 48%;
+      padding: 15px;
+      font-size: 18px;
+      border: 2px solid #007bff;
+      background: transparent;
+      color: white;
+      text-align: center;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    .amount-button:hover {
+      background-color: #007bff;
+    }
+
+    .payment-methods {
+      margin-top: 20px;
+    }
+
+    .payment-option {
+      padding: 15px;
+      font-size: 18px;
+      border: 2px solid #007bff;
+      background: transparent;
+      color: white;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .radio-btn {
+      width: 20px;
+      height: 20px;
+      border: 2px solid white;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .radio-btn.selected {
+      border: 2px solid #00ff00;
+    }
+
+    .radio-btn.selected::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      background: #00ff00;
+      border-radius: 50%;
+    }
+
+    .rules {
+      margin-top: 20px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .rules span {
+      color: orange;
+      font-weight: bold;
+    }
+
+    .btn-recharge {
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      text-align: center;
+      background: #007bff;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .btn-recharge:hover {
+      background-color: #0056b3;
+    }
+
+    .profile-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1001;
+    }
+
+    .profile-icon img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal .container {
+      background: #112866;
+      padding: 20px;
+      border-radius: 10px;
+      position: relative;
+      width: 80%;
+      max-width: 400px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      border: none;
+      background: transparent;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .close-btn:hover {
+      color: red;
+    }
+
+    .contact a {
+      color: #00ffcc;
+      text-decoration: none;
+    }
+
+    .confirmation {
+      margin-top: 15px;
+      color: #00ff00;
+      font-weight: bold;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="back-button" onclick="goBack()"><i class="fa-solid fa-arrow-left"></i></div>
+    RECHARGE
+  </div>
+
+  <div class="container">
+    <input type="number" class="input-box" id="amount" placeholder="Entrez un montant (FCFA)">
+
+    <div class="amount-buttons">
+      <div class="amount-button" onclick="setAmount(3000)">3000</div>
+      <div class="amount-button" onclick="setAmount(5000)">5000</div>
+      <div class="amount-button" onclick="setAmount(10000)">10000</div>
+      <div class="amount-button" onclick="setAmount(15000)">15000</div>
+    </div>
+
+    <div class="payment-methods">
+      <div class="payment-option" onclick="selectMethod('wave')">
+        Wave <div class="radio-btn selected" id="wave"></div>
+      </div>
+      <div class="payment-option" onclick="selectMethod('mtn')">
+        MTN <div class="radio-btn" id="mtn"></div>
+      </div>
+      <div class="payment-option" onclick="selectMethod('moov')">
+        Moov <div class="radio-btn" id="moov"></div>
+      </div>
+      <div class="payment-option" onclick="selectMethod('visa')">
+        Visa <div class="radio-btn" id="visa"></div>
+      </div>
+    </div>
+
+    <div class="rules">
+      <p>1. Recharge minimale <span>1000 FCFA</span>.</p>
+      <p>2. Recharge maximale <span>1500000 FCFA</span>.</p>
+      <p>3. Après le paiement, saisissez l'identifiant de transaction.</p>
+      <p>4. En cas de souci, contactez le service client.</p>
+    </div>
+
+    <button class="btn-recharge" onclick="recharge()">Recharge</button>
+    <div class="confirmation" id="confirmationMsg">Montant enregistré. Redirection en cours...</div>
+  </div>
+
+  <div class="profile-icon" onclick="openModal()">
+    <img src="img/service client.jpg" alt="Service Client">
+  </div>
+
+  <div id="serviceModal" class="modal">
+    <div class="container">
+      <button class="close-btn" onclick="closeModal()">×</button>
+      <h2>Contactez notre Service Client</h2>
+      <p class="contact">📞 Ligne 1 : <a href="https://wa.me/2250502056302" target="_blank">+225 0502056302</a></p>
+      <p class="contact">📞 Ligne 2 : <a href="https://wa.me/2250719455161" target="_blank">+225 0719455161</a></p>
+      <p class="contact">📞 Ligne 3 : <a href="https://wa.me/2250799343386" target="_blank">+225 0799343386</a></p>
+    </div>
+  </div>
+
+  <script>
+    function goBack() {
+      window.location.href = 'user.html'; // Redirection vers la page utilisateur
+    }
+
+    function openModal() {
+      document.getElementById('serviceModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('serviceModal').classList.remove('active');
+    }
+
+    function setAmount(value) {
+      document.getElementById("amount").value = value;
+    }
+
+    function selectMethod(method) {
+      const methods = ["wave", "mtn", "moov", "visa"];
+      methods.forEach(id => {
+        document.getElementById(id).classList.remove("selected");
+      });
+      document.getElementById(method).classList.add("selected");
+    }
+
+    function recharge() {
+      const amount = parseInt(document.getElementById("amount").value);
+      const confirmationMsg = document.getElementById("confirmationMsg");
+
+      if (!amount || amount < 500 || amount > 1500000) {
+        alert("Veuillez entrer un montant entre 500 et 1500000 FCFA.");
+        return;
+      }
+
+      localStorage.setItem("rechargeAmount", amount);
+
+      let method = "wave";
+      if (document.getElementById("mtn").classList.contains("selected")) method = "mtn";
+      else if (document.getElementById("moov").classList.contains("selected")) method = "moov";
+      else if (document.getElementById("visa").classList.contains("selected")) method = "visa";
+
+      confirmationMsg.style.display = "block";
+
+      setTimeout(() => {
+        if (method === "wave") window.location.href = "wave.html";
+        else if (method === "mtn") window.location.href = "MTN.html";
+        else if (method === "moov") window.location.href = "Moow.html";
+        else window.location.href = "visa.html";
+      }, 1500);
+    }
+  </script>
+</body>
+</html>

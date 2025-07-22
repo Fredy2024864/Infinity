@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Historique des Retraits</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: #0a183d;
+      color: #fff;
+    }
+    .container {
+      padding: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    h2 {
+      margin-bottom: 20px;
+      font-size: 20px; 
+      border-bottom: 1px solid #27ff9d;
+      padding-bottom: 8px;
+    }
+    .status-item {
+      background: #112a50;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 0 8px rgba(0, 255, 255, 0.1);
+    }
+    .status-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+    .status-label {
+      font-size: 14px;
+      font-weight: bold;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+    .status-success {
+      background-color: #27ff9d22;
+      color: #27ff9d;
+      border: 1px solid #27ff9d;
+    }
+    .status-traitement {
+      background-color: #49482f;
+      color: #ffa500;
+      border: 1px solid #ffa500;
+    }
+    .status-completé {
+      background-color: #007bff22;
+      color: #4ea5ff;
+      border: 1px solid #4ea5ff;
+    }
+    .amount {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .withdraw-details {
+      margin-top: 10px;
+      display: none;
+    }
+    .withdraw-card,
+    .process,
+    .info-box {
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 12px;
+      background: #112a50;
+      box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.05);
+    }
+    .card-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    .card-row .label {
+      color: #ccc;
+    }
+    .card-row .value {
+      color: #fff;
+    }
+    .card-icon {
+      text-align: right;
+      color: #27ff9d;
+      font-size: 20px;
+      margin-top: 5px;
+    }
+    .process h3,
+    .info-box h3 {
+      color: orange;
+      margin-top: 0;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .steps {
+      list-style: none;
+      padding-left: 0;
+    }
+    .step {
+      margin-bottom: 15px;
+      padding-left: 20px;
+      position: relative;
+    }
+    .step::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 4px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: #ccc;
+    }
+    .step.done::before {
+      background-color: #27ff9d;
+      box-shadow: 0 0 6px #27ff9d;
+    }
+    .step.in-progress::before {
+      background-color: orange;
+      box-shadow: 0 0 6px orange;
+    }
+    .step.pending::before {
+      background-color: #007bff;
+      box-shadow: 0 0 6px #007bff;
+    }
+    .step.failed::before {
+      background-color: #ff4d4d;
+      box-shadow: 0 0 6px #ff4d4d;
+    }
+    ol {
+      padding-left: 20px;
+      font-size: 13px;
+      color: #ccc;
+    }
+    .profile-icon {
+      position: fixed;
+      bottom: 180px;
+      right: 0;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-top: 50px;
+    }
+    .modal {
+      display: none; /* Masquer par défaut */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal.active {
+      display: flex; /* Afficher la modale */
+    }
+    .container-menu {
+      background: #112866; 
+      padding: 5px 20px;
+      border-radius: 10px;
+    }
+    .close-btn {
+      position: absolute;
+      top: 226px;
+      right: 510px;
+      border: none;
+      border-radius: 5px;
+      width: 30px;
+      height: 30px;
+      font-weight: bold;
+      font-size: 20px;
+      cursor: pointer;
+      color: #fff;
+      background: none;
+    }
+    span img {
+      width: 50px;
+      height: 50px;
+      border-radius: 100%;
+    }
+    .contact a {
+      color: #fff;
+    }
+ 
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Historique des Retraits</h2>
+    <a href="retrait.html" style="display: inline-block; margin-bottom: 20px; padding: 10px 20px; background-color: #27ff9d; color: #0a183d; text-decoration: none; border-radius: 5px; font-weight: bold;">Effectuer un nouveau retrait</a>
+    <a href="#" onclick="resetHistory()" style="display: inline-block; margin-bottom: 20px; padding: 10px 20px; background-color: #ff4d4d; color: #fff; text-decoration: none; border-radius: 5px; font-weight: bold;">Réinitialiser l'historique</a>
+    <div class="historique-list">
+      <!-- Les retraits seront chargés ici dynamiquement -->
+    </div>
+ 
+    
+  </div>
+  <div class="profile-icon" onclick="window.location.href='contactservice.html'"></div>
+  <i class="profile-icon" onclick="openModal()"><span><img src="img/service client.jpg" alt=""></span></i>
+  <div id="serviceModal" class="modal">
+    <div class="container-menu">
+      <button class="close-btn" onclick="closeModal()">×</button>
+      <h2>Contactez notre Service Client</h2>
+      <p class="contact">📞 Ligne 1 : <a href="https://wa.me/2250502056302" target="_blank">+225 0502056302</a></p>
+      <p class="contact">📞 Ligne 2 : <a href="https://wa.me/2250719455161" target="_blank">+225 0719455161</a></p>
+      <p class="contact">📞 Ligne 3 : <a href="https://wa.me/2250799343386" target="_blank">+225 0799343386</a></p>
+    </div>
+  </div>
+
+
+  <script>
+    function goBack() {
+        window.history.back();
+    }
+    
+    function openModal() {
+        document.getElementById('serviceModal').classList.add('active');
+    }
+    
+    function closeModal() {
+        document.getElementById('serviceModal').classList.remove('active');
+    }
+    
+    function toggleDetails(element) {
+        const details = element.nextElementSibling;
+        const allDetails = document.querySelectorAll('.withdraw-details');
+        allDetails.forEach(d => {
+            if (d !== details) d.style.display = "none";
+        });
+        details.style.display = details.style.display === "block" ? "none" : "block";
+    }
+    
+    function getCurrentDateTime() {
+        const now = new Date();
+        return now.toLocaleDateString() + " " + now.toLocaleTimeString();
+    }
+    
+    function loadWithdrawals() {
+        const withdrawals = JSON.parse(localStorage.getItem('withdrawals')) || [];
+        const container = document.querySelector('.historique-list');
+        container.innerHTML = '';
+    
+        withdrawals.forEach((withdrawal, index) => {
+            const status = withdrawal.status || 'Demande Retrait Envoyée';
+            const timestamps = withdrawal.timestamps || {};
+            const transactionRef = `REF-${index + 1}-${Date.now()}`;
+    
+            // Initialisation des étapes
+            if (!timestamps['Demande Retrait Envoyée']) timestamps['Demande Retrait Envoyée'] = withdrawal.date || getCurrentDateTime();
+    
+            let step1 = { name: 'Demande Retrait Envoyée', state: 'done', time: timestamps['Demande Retrait Envoyée'] };
+            let step2 = { name: '', state: '', time: '' };
+            let step3 = { name: '', state: '', time: '' };
+            let finalMessage = '';
+    
+            // Logique de progression
+            if (status === 'En Traitement') {
+                timestamps['En Traitement'] = timestamps['En Traitement'] || getCurrentDateTime();
+                step2 = { name: 'En Traitement', state: 'in-progress', time: timestamps['En Traitement'] };
+            } else if (status === 'Complété') {
+                timestamps['Complété'] = timestamps['Complété'] || getCurrentDateTime();
+                step2 = { name: 'Complété', state: 'done', time: timestamps['Complété'] };
+                timestamps['Transfert en cours'] = timestamps['Complété'];
+                step3 = { name: 'Transfert en cours', state: 'in-progress', time: timestamps['Transfert en cours'] };
+            } else if (status === 'Transfert Réussi') {
+                timestamps['Complété'] = timestamps['Complété'] || getCurrentDateTime();
+                timestamps['Transfert Réussi'] = timestamps['Transfert Réussi'] || timestamps['Complété'];
+                step2 = { name: 'Complété', state: 'done', time: timestamps['Complété'] };
+                step3 = { name: 'Transfert Réussi', state: 'done', time: timestamps['Transfert Réussi'] };
+            } else if (status === 'Remboursé') {
+                timestamps['Complété'] = timestamps['Complété'] || getCurrentDateTime();
+                timestamps['Transfert Réussi'] = timestamps['Transfert Réussi'] || timestamps['Complété'];
+                timestamps['Remboursé'] = timestamps['Remboursé'] || getCurrentDateTime();
+                step2 = { name: 'Complété', state: 'done', time: timestamps['Complété'] };
+                step3 = { name: 'Remboursé', state: 'done', time: timestamps['Remboursé'] };
+                finalMessage = `<p style="color:#ff4d4d; font-weight:bold;">● Statut : Remboursé</p>`;
+            }
+    
+            withdrawal.timestamps = timestamps;
+    
+            const statusColors = {
+                'Demande Retrait Envoyée': '#2196f3',
+                'En Traitement': '#ff9800',
+                'Complété': '#4caf50',
+                'Transfert en cours': '#4caf50',
+                'Transfert Réussi': '#4caf50',
+                'Remboursé': '#f44336'
+            };
+    
+            const statusItem = document.createElement('div');
+            statusItem.className = 'status-item';
+    
+            const bgColor = statusColors[status] || '#ccc';
+    
+            statusItem.innerHTML = `
+                <div class="status-top" onclick="toggleDetails(this)">
+                    <span class="amount">${withdrawal.amount} FCFA</span>
+                    <span class="status-label" style="background:${bgColor}; color:#fff; padding:5px 10px; border-radius:12px;">${status}</span>
+                </div>
+                <div class="withdraw-details" style="display:none;">
+                    <div class="withdraw-card">
+                        <div class="card-row"><span class="label">Montant</span><span class="value">${withdrawal.amount} FCFA</span></div>
+                        <div class="card-row"><span class="label">Date</span><span class="value">${step1.time}</span></div>
+                        <div class="card-row"><span class="label">Réf. Transaction</span><span class="value">${transactionRef}</span></div>
+                        <div class="card-icon"><i class="fas fa-credit-card"></i></div>
+                    </div>
+                    <div class="process">
+                        <h3>Processus Retrait</h3>
+                        <ul class="steps">
+                            <li class="step ${step1.state}">
+                                <p><strong>${step1.name}</strong></p>
+                                <small>${step1.time}</small>
+                            </li>
+                            ${step2.name ? `
+                            <li class="step ${step2.state}">
+                                <p><strong>${step2.name}</strong></p>
+                                <small>${step2.time}</small>
+                            </li>` : ''}
+                            ${step3.name ? `
+                            <li class="step ${step3.state}" style="${step3.name === 'Remboursé' ? 'color:#f44336;' : ''}">
+                                <p><strong>${step3.name}</strong></p>
+                                <small>${step3.time}</small>
+                            </li>` : ''}
+                        </ul>
+                        ${finalMessage}
+                    </div>
+                </div>
+            `;
+    
+            container.appendChild(statusItem);
+        });
+    
+        // Sauvegarde des modifications
+        localStorage.setItem('withdrawals', JSON.stringify(withdrawals));
+    }
+    
+    function resetHistory() {
+        if (confirm("Voulez-vous vraiment réinitialiser l'historique ?")) {
+            localStorage.removeItem('withdrawals');
+            loadWithdrawals();
+        }
+    }
+    
+    window.addEventListener('DOMContentLoaded', () => {
+        loadWithdrawals();
+    });
+    </script>
+
+
+
+
+</body>
+</html>

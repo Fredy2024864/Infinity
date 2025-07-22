@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Historique des Dépôts</title>
+  <style>
+    body {
+      background: #0a0f1a;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #00bfff;
+    }
+    .depot {
+      background: #111b32;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+    }
+    .depot p {
+      margin: 5px 0;
+    }
+    .statut {
+      padding: 5px 10px;
+      border-radius: 5px;
+      display: inline-block;
+      font-weight: bold;
+    }
+    .statut.en-attente {
+      background: orange;
+      color: #000;
+    }
+    .statut.validé {
+      background: #00ff00;
+      color: #000;
+    }
+    .statut.annulé {
+      background: red;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <h1>Historique de vos dépôts</h1>
+  <div id="historique-container"></div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const historiqueContainer = document.getElementById("historique-container");
+      const depots = JSON.parse(localStorage.getItem("depots") || "[]");
+      if (depots.length === 0) {
+        historiqueContainer.innerHTML = "<p>Aucun dépôt enregistré pour le moment.</p>";
+        return;
+      }
+      depots.reverse().forEach(depot => {
+        const statutClass = depot.statut === "Validé" ? "validé" :
+                            depot.statut === "Annulé" ? "annulé" : "en-attente";
+        const html = `
+          <div class="depot">
+            <p><strong>Montant :</strong> ${depot.montant}</p>
+            <p><strong>Numéro de Paiement :</strong> ${depot.numeroPaiement || "Non spécifié"}</p>
+            <p><strong>Méthode :</strong> ${depot.methodePaiement || "Inconnue"}</p>
+            <p><strong>Statut :</strong> <span class="statut ${statutClass}">${depot.statut}</span></p>
+          </div>
+        `;
+        historiqueContainer.innerHTML += html;
+      });
+    });
+    // Fonction pour ajouter un dépôt avec statut "Validé"
+    function addDepot(montant, numeroPaiement, methodePaiement) {
+        const depots = JSON.parse(localStorage.getItem("depots") || "[]");
+        const nouveauDepot = {
+            montant: montant,
+            numeroPaiement: numeroPaiement,
+            methodePaiement: methodePaiement,
+            statut: "Validé" // Définit le statut comme "Validé"
+        };
+        depots.push(nouveauDepot);
+        localStorage.setItem("depots", JSON.stringify(depots));
+        // Mise à jour du portefeuille de recharge et du total des recharges
+        updateRechargeWallet(montant);
+        updateTotalRecharges(montant); // Ajout de la mise à jour du total des recharges
+    }
+    // Fonction pour mettre à jour le Portefeuille Recharge
+    function updateRechargeWallet(montant) {
+        const currentRecharge = parseFloat(localStorage.getItem('portefeuilleRecharge') || '0');
+        const nouveauTotal = currentRecharge + parseFloat(montant);
+        localStorage.setItem('portefeuilleRecharge', nouveauTotal.toFixed(2));
+    }
+    // Fonction pour mettre à jour le Total des Recharges
+    function updateTotalRecharges(montant) {
+        const currentTotalRecharges = parseFloat(localStorage.getItem('totalRecharges') || '0');
+        const nouveauTotal = currentTotalRecharges + parseFloat(montant);
+        localStorage.setItem('totalRecharges', nouveauTotal.toFixed(2));
+    }
+    // Exemple d'ajout d'un dépôt
+    addDepot(2000, "123456", "Carte de Crédit"); // Changer le montant pour tester
+  </script>
+
+
+
+
+</body>
+</html>

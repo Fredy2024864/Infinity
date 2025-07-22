@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Adresses</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            background: #0a0f29;
+            color: white;
+        }
+        .container {
+            padding: 20px;
+        }
+        button {
+            background-color: #04568e;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: green;
+        }
+        #formContainer {
+            display: none;
+            background: #0a0f29;
+            color: black;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            margin: 20px auto;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid ;
+        }
+        #map {
+            width: 100%;
+            height: 300px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+        .adresseDetails {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #fff;
+            color: black;
+            border-radius: 5px;
+            border: 1px solid #04568e;
+        }
+
+        .profile-icon {
+            position: fixed;
+            bottom: 180px;
+            right: 0;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-top: 50px;
+        }
+        img{
+            width: 50px;
+            height: 50px;
+            border-radius: 100px
+        }
+        .modal {
+            display: none; /* Masquer par défaut */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex; /* Afficher la modale */
+        }
+
+        .modal .container {
+            background: #112866;
+           padding: 10px 20px;
+           border-radius: 10px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 188px;
+            right: 480px;
+            border: none;
+            border-radius: 5px;
+            width: 30px;
+            height: 30px;
+            font-size: 30px;
+            cursor: pointer;
+        }
+        button:first-child {
+        background: none;
+ 
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Gestion des Adresses</h2>
+        <button id="toggleForm">AJOUTER/EDITER UNE ADRESSE</button>
+        <div id="adresseList"></div>
+        <!-- Ajouter un bouton pour réinitialiser l'adresse -->
+        <button id="resetAddress" style="display:none;">Réinitialiser l'adresse</button>
+    </div>
+    <div id="formContainer">
+        <h2>AJOUTER/EDITER UNE ADRESSE</h2>
+        <form id="adresseForm">
+            <input type="text" id="nom" placeholder="Nom de l'entreprise" required>
+            <input type="tel" id="telephone" placeholder="Numéro de téléphone" required>
+            <input type="email" id="email" placeholder="E-mail" required>
+            <select id="region" required>
+                <option value="">Sélectionnez une région</option>
+                <option value="Abidjan-Lagunes">Abidjan-Lagunes</option>
+                <option value="Bas-Sassandra">Bas-Sassandra</option>
+                <option value="Comoé">Comoé</option>
+                <option value="Denguélé">Denguélé</option>
+                <option value="Gôh-Djiboua Sud-Bandama">Gôh-Djiboua Sud-Bandama</option>
+                <option value="Haut-Sassandra Marahoue">Haut-Sassandra Marahoue</option>
+                <option value="Lacs">Lacs</option>
+                <option value="Lagunes Agnéby">Lagunes Agnéby</option>
+                <option value="Montagnes Moyen Cavally">Montagnes Moyen Cavally</option>
+                <option value="Savanes">Savanes</option>
+                <option value="Vallée du Bandama">Vallée du Bandama</option>
+                <option value="Woroba Worodougon">Woroba Worodougon</option>
+                <option value="Zanzan">Zanzan</option>
+            </select>
+            <input type="text" id="ville" placeholder="Ville" required>
+            <input type="text" id="codePostal" placeholder="Code Postal" required>
+            <input type="text" id="adresseDetail" placeholder="Adresse détaillée" required>
+            <button type="submit">Mettre à jour l'adresse</button>
+        </form>
+        <p id="adresse"></p>
+        <div id="map"></div>
+    </div>
+
+    <div class="profile-icon" onclick="window.location.href='contactservice.html'"></div>
+    <i class="profile-icon" onclick="openModal()"><span><img src="img/service client.jpg" alt=""></span></i>
+    
+        <div id="serviceModal" class="modal">
+            <div class="container">
+                <button class="close-btn" onclick="closeModal()">×</button>
+                <h2>Contactez notre Service Client</h2>
+                <p class="contact">📞 Ligne 1 : <a href="https://wa.me/2250502056302" target="_blank">+225 0502056302</a></p>
+                <p class="contact">📞 Ligne 2 : <a href="https://wa.me/2250719455161" target="_blank">+225 0719455161</a></p>
+                <p class="contact">📞 Ligne 3 : <a href="https://wa.me/2250799343386" target="_blank">+225 0799343386</a></p>
+            </div>
+        </div>
+   
+        <script>
+            function goBack() {
+                window.history.back();
+            }
+        
+            function openModal() {
+                document.getElementById('serviceModal').classList.add('active');
+            }
+        
+            function closeModal() {
+                document.getElementById('serviceModal').classList.remove('active');
+            }
+        </script>
+
+    <script>
+        let map;
+        let marker;
+        let geocoder;
+        let currentAddress = null; // Variable pour stocker l'adresse actuelle
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 48.8566, lng: 2.3522 },
+                zoom: 15,
+            });
+            marker = new google.maps.Marker({
+                map: map,
+            });
+            geocoder = new google.maps.Geocoder();
+        }
+
+        document.getElementById("toggleForm").addEventListener("click", function() {
+            let formContainer = document.getElementById("formContainer");
+            formContainer.style.display = formContainer.style.display === "none" ? "block" : "none";
+        });
+
+        document.getElementById("adresseForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            // Récupérer les valeurs du formulaire
+            let nom = document.getElementById("nom").value;
+            let telephone = document.getElementById("telephone").value;
+            let email = document.getElementById("email").value;
+            let region = document.getElementById("region").value;
+            let ville = document.getElementById("ville").value;
+            let codePostal = document.getElementById("codePostal").value;
+            let adresseDetail = document.getElementById("adresseDetail").value;
+
+            let fullAddress = `${adresseDetail}, ${ville}, ${region}, ${codePostal}`;
+
+            // Mise à jour ou ajout de l'adresse
+            if (currentAddress) {
+                // Mise à jour de l'adresse existante
+                currentAddress = { fullAddress, nom, telephone, email };
+                document.getElementById("adresse").textContent = `Adresse mise à jour : ${fullAddress}`;
+            } else {
+                // Ajout de la nouvelle adresse
+                currentAddress = { fullAddress, nom, telephone, email };
+                document.getElementById("adresse").textContent = `Nouvelle adresse : ${fullAddress}`;
+            }
+
+            // Affichage de l'adresse dans la section de gestion des adresses
+            let adresseList = document.getElementById("adresseList");
+            adresseList.innerHTML = "";  // Effacer les précédentes adresses affichées
+            let addressDiv = document.createElement("div");
+            addressDiv.classList.add("adresseDetails");
+            addressDiv.textContent = `Nom de l'entreprise : ${nom}, Téléphone : ${telephone}, Email : ${email}, Adresse : ${fullAddress}`;
+            adresseList.appendChild(addressDiv);
+
+            // Géocodage de l'adresse et mise à jour de la carte
+            geocoder.geocode({ address: fullAddress }, function(results, status) {
+                if (status === "OK") {
+                    map.setCenter(results[0].geometry.location);
+                    marker.setPosition(results[0].geometry.location);
+                } else {
+                    alert("L'adresse n'a pas pu être trouvée : " + status);
+                }
+            });
+
+            // Afficher le bouton de réinitialisation
+            document.getElementById("resetAddress").style.display = "inline-block";
+
+            // Réinitialiser le formulaire
+            document.getElementById("adresseForm").reset();
+            document.getElementById("formContainer").style.display = "none";
+        });
+
+        // Fonction de réinitialisation
+        document.getElementById("resetAddress").addEventListener("click", function() {
+            // Réinitialiser l'adresse affichée et la carte
+            currentAddress = null;
+            document.getElementById("adresse").textContent = "";
+            document.getElementById("adresseList").innerHTML = "";
+            map.setCenter({ lat: 48.8566, lng: 2.3522 });
+            marker.setPosition({ lat: 48.8566, lng: 2.3522 });
+
+            // Cacher le bouton de réinitialisation
+            document.getElementById("resetAddress").style.display = "none";
+        });
+
+        // Initialiser la carte lorsque la page se charge
+        window.onload = initMap;
+    </script>
+
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+</body>
+</html>

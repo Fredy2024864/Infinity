@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>Page Vide</title>
+    <style>
+     header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background-color: rgb(11, 13, 46);
+      z-index: 500;
+    }
+    body {
+      margin-top: 135px; /* Ajustez selon la hauteur du header */
+    }
+    .dropdown {
+      background-color: #1E2A70;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    body {
+      font-family: Arial;
+      padding: 20px;
+      background: #e3e3e9;
+      margin: 0;
+    }
+    .boxes {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-top: 145px;
+    }
+    .box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #0c09c9;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 45px;
+     
+    }
+    .box img {
+      width: 160px;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .info {
+      flex: 1;
+      margin-left: 15px;
+    }
+    .info p {
+      margin: 5px 0;
+      color: #fff;
+    }
+    .btn {
+      padding: 8px 20px;
+      background: #4CAF50;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-left: auto; /* Pour aligner le bouton à droite */
+    }
+    .btn:hover {
+      background: #45a049;
+    }
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.6);
+    }
+    .modal-content {
+      background-color: #1E2A70;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      color: #fff;
+    }
+    .modal-content img {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+    .modal-content h3 {
+      margin-top: 0;
+    }
+    .modal-content p {
+      margin: 5px 0;
+    }
+    .pay-button {
+      margin-top: 15px;
+      width: 100%;
+      background: #007bff;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .close {
+      float: right;
+      font-size: 20px;
+      cursor: pointer;
+      color: #fff;
+    }
+     /* Menu fixe en bas */
+    .footer-menu {
+            position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(10, 15, 41, 0.95);
+        display: flex;
+        justify-content: space-around;
+        padding: 10px 0;
+        border-top: 1px solid rgba(10, 15, 41, 0.95);
+        border-radius: 25px;
+        
+    }
+    .footer-menu button {
+        background: blue;
+        border: none;
+        cursor: pointer;
+        color: #fff;
+        font-size: 24px;
+       
+        border-radius: 30%;
+        height: 45px;
+        width: 55px;
+    }
+       
+    .dropdown {
+      align-items: center;
+      display: flex;
+    }
+    .dropdown-button {
+      background-color: #3498db;
+      color: white;
+      padding: 10px;
+      border: none;
+      cursor: pointer;
+      left: 800px;
+      top: 100%;
+      transition: 0.3s ease;
+      border-radius: 16px;
+      font-size: 16px;
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+    .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+    .dropdown-content a:hover {background-color: #f1f1f1}
+    .dropdown-button:hover + .dropdown-content {
+      display: block;
+    }
+    .dropdown-content:hover {
+      display: block;
+    }
+    .Bases {
+      background-color: #1E2A70;
+      color: white;
+      border: 1px solid cadetblue;
+      padding: 10px 15px;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-left: 38px;
+      transition: 0.3s ease;
+    }
+    .Bases:hover {
+      background-color: #0c0e1b;
+      color: white;
+      border: 1px solid cadetblue;
+    }
+    .Bases:active {
+      background-color: #0c0e1b;
+      color: white;
+      border: 1px solid cadetblue;
+    }
+    .Bases:focus {
+      background-color: #0c0e1b;
+      color: white;
+      border: 1px solid cadetblue;
+    }
+    .boxes{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 20px;
+        margin-top: 145px;
+    }
+</style>
+</head>
+<body>
+    <header>
+    <h1>ARTICLES</h1>
+    <div class="dropdown">
+      <div class="Bases" onclick="redirectToProduits()">Produits Bases</div>
+      <div class="Bases" >InfinityBox</div>
+    </div>
+  </header>
+   <div class="boxes">
+    <p>
+        Pas encore de produits disponibles.
+    </p>
+   </div>
+
+   <footer>
+        <div class="footer-menu">
+                <div class="footer-menu ">
+                    <button ><a onclick="redirectToAcceuil()"><i class="fa fa-home"></i></a></button>
+                    <button><a onclick="redirectToParametre()"><i class="fa-solid fa-bars"></i></a></button>
+                    <button><a><i class="fa-solid fa-circle-info" onclick="redirectToInfo()"></i></a></button>
+                    <button><a onclick="redirectToUser()"><i class="fa fa-user"></i></a></button>
+                </div>
+        </div>
+    </footer>
+    <script>
+        function redirectToProduits() {
+            window.location.href = "produitsBases.html";
+        }
+        function redirectToParametre() {
+            window.location.href = "parametre.html";
+        }
+        function redirectToInfo() {
+            window.location.href = "info.html";
+        }
+        function redirectToUser() {
+            window.location.href = "user.html";
+        }
+        function redirectToAcceuil() {
+            window.location.href = "reussi.html";
+        }
+        </script>
+</body>
+</html>
+    
+       
+        
